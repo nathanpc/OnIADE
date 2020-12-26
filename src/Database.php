@@ -55,6 +55,11 @@ class Database {
 			$html .= "<tr>";
 
 			foreach ($cols as $col) {
+				// Check for NULLs.
+				if (is_null($row[$col]))
+					$row[$col] = "<i>NULL</i>";
+
+				// Place the cell into the table.
 				$html .= "<td>" . $row[$col] . "</th>";
 			}
 
