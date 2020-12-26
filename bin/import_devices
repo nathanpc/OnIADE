@@ -1,0 +1,31 @@
+#!/usr/local/bin/php
+<?php
+/**
+ * import_devices
+ * Imports a device list from a Advanced IP Scanner XML file.
+ * 
+ * @author Nathan Campos <nathan@innoveworkshop.com>
+ */
+
+function main($argc, $argv) {
+	// Check if we have the required arguments.
+	if ($argc != 2)
+		usage($argv);
+
+	// TODO: Import the XML and simulate an edge device querying the API.
+	print "TODO\n";
+}
+
+/**
+ * Teaches the user how to use the script.
+ */
+function usage($argv) {
+	print "Usage: $argv[0] <xmlfile>\n\n";
+	print "Arguments:\n";
+	print "    xmlfile\tAdvanced IP Scanner exported XML file.\n";
+
+	exit(1);
+}
+
+main($argc, $argv);
+?>
