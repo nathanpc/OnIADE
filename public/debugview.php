@@ -3,11 +3,11 @@
 	<!-- Main Body -->
 	<div class="container">
 		<h3>
-			Fancy display heading
-			<small class="text-muted">With faded secondary text</small>
+			Floors
+			<small class="text-muted">The things we stand on</small>
 		</h3>
 
-		<p>This is just a test of things.</p>
+		<?= Database::get_html_table("floors") ?>
 	</div>
 
 <?php require(__DIR__ . "/../templates/footer.php"); ?>
