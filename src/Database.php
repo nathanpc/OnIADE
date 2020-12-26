@@ -30,7 +30,7 @@ class Database {
 	 * @return string       HTML representation of the database table.
 	 */
 	public static function get_html_table($name) {
-		$html = "<table class='table'>";
+		$html = "<table class='table table-striped table-hover'>";
 		$dbh = Database::connect();
 
 		// Get table columns.
