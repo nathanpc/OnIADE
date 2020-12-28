@@ -84,6 +84,7 @@ class Device {
 	public function save() {
 		// Get database handle.
 		$dbh = Database::connect();
+		$stmt = null;
 
 		// Check if we are creating a new device or updating one.
 		if (is_null($this->id)) {
