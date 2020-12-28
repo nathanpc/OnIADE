@@ -57,7 +57,8 @@ class Device {
 	 * 
 	 * @param  string $mac_address Device MAC address.
 	 * @return Device              Populated Device object with data from
-	 *                             database, or NULL if the ID wasn't found.
+	 *                             database, or NULL if the MAC address wasn't
+	 *                             found.
 	 */
 	public static function FromMACAddress($mac_addr) {
 		// Get device from database.
