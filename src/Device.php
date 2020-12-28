@@ -33,7 +33,7 @@ class Device {
 	 * @return Device     Populated Device object with data from database, or
 	 *                    NULL if the ID wasn't found.
 	 */
-	public static function FromDatabase($id) {
+	public static function FromID($id) {
 		$dbh = Database::connect();
 		
 		// Get device from database.
