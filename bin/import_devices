@@ -7,13 +7,88 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
+/**
+ * Script"s entry point.
+ * 
+ * @param int   $argc Number of arguments supplied to the script.
+ * @param array $argv Array of strings with script arguments.
+ */
 function main($argc, $argv) {
 	// Check if we have the required arguments.
 	if ($argc != 2)
 		usage($argv);
 
-	// TODO: Import the XML and simulate an edge device querying the API.
-	print "TODO\n";
+	// Load XML file and go through devices.
+	$xml = simplexml_load_file($argv[1]);
+	foreach ($xml as $device) {
+		// Ignore devices that are not alive.
+		if ($device["status"] != "alive")
+			continue;
+
+		// Send API request.
+		post_device($device);
+	}
+}
+
+/**
+ * Simulates an edge device sending information to the API endpoint about a
+ * device being found on the network.
+ * 
+ * @param array $device Row from a Advanced IP Scanner XML file parsed by SimpleXML.
+ */
+function post_device($device) {
+	print $device["name"] . " ";
+
+	$req = post("http://oniade.local/api/v1/device.php", array(
+		"macaddr" => (string)$device["mac"],
+		"hostname" => (string)$device["name"],
+		"floor" => $device["has_http"] + $device["has_https"] + $device["has_ftp"],
+		"ipaddr" => (string)$device["ip"]
+	));
+
+	// Check if the device was added successfully.
+	if ($req["failed"]) {
+		return;
+		$response = json_decode($req["body"]);
+		print "\033[1;31mFAILED\033[0m - \033[0;31m" .
+			strtoupper($response->info->status) . "\033[0m: " .
+			$response->info->message . "\n";
+
+		return;
+	}
+
+	// Device was added.
+	print "\033[1;32mOK\033[0m\n";
+}
+
+/**
+ * Performs an HTTP POST request to a specified URL with some form data.
+ * 
+ * @param  string $url  URL to issue the request to.
+ * @param  array  $data Array of form data in key-value form.
+ * @return array        Associative array with status code and body.
+ */
+function post($url, $data) {
+	// Setup the request.
+	$options = array(
+		"http" => array(
+			"header"  => "Content-type: application/x-www-form-urlencoded\r\n",
+			"method"  => "POST",
+			"content" => http_build_query($data),
+			"ignore_errors" => true
+		)
+	);
+
+	// Open the stream and do the request.
+	$context  = stream_context_create($options);
+	$result = file_get_contents($url, false, $context);
+	$status = (int)explode(" ", $http_response_header[0])[1];
+
+	return array(
+		"status" => $status,
+		"failed" => !(($status >= 200) && ($status < 300)),
+		"body" => $result
+	);
 }
 
 /**
