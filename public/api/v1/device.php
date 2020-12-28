@@ -9,6 +9,7 @@
 
 require_once(__DIR__ . "/../../../src/Device.php");
 require_once(__DIR__ . "/../../../src/Floor.php");
+require_once(__DIR__ . "/../../../src/HistoryEntry.php");
 
 // Set the content type.
 header("Content-Type: application/json");
@@ -20,13 +21,13 @@ header("Content-Type: application/json");
 function check_required_params() {
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		// We've found a device and want to add it to the history.
-		if (!(isset($_POST["macaddr"]) && isset($_POST["floor"]))) {
+		if (!(isset($_POST["macaddr"]) && isset($_POST["floor"]) && isset($_POST["ipaddr"]))) {
 			http_response_code(424);
 			echo json_encode(array(
 				"info" => array(
 					"level" => 0,
 					"status" => "error",
-					"message" => "Required parameter 'macaddr' or 'floor' wasn't specified."
+					"message" => "Required parameter 'macaddr', 'ipaddr', or 'floor' wasn't specified."
 				)
 			));
 
@@ -133,6 +134,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		return;
 	}
 
+	// Create a new device entry.
+	$entry = HistoryEntry::Create($device, $floor, $_POST["ipaddr"]);
+
 	http_response_code(200);
 	echo json_encode(array(
 		"info" => array(
@@ -140,8 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 			"status" => "ok",
 			"message" => "Device added to history."
 		),
-		"device" => $device->as_array(),
-		"floor" => $floor->as_array()
+		"entry" => $entry->as_array()
 	));
 }
 
