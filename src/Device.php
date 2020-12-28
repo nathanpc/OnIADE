@@ -38,7 +38,7 @@ class Device {
 		// Get device from database.
 		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM devices WHERE id = :id");
-		$query->bindParam(":id", $id);
+		$query->bindValue(":id", $id);
 		$query->execute();
 		$dev = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -64,7 +64,7 @@ class Device {
 		// Get device from database.
 		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM devices WHERE mac_addr = :mac_addr");
-		$query->bindParam(":mac_addr", $mac_addr);
+		$query->bindValue(":mac_addr", $mac_addr);
 		$query->execute();
 		$dev = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -93,12 +93,12 @@ class Device {
 		} else {
 			// Update an existing device.
 			$stmt = $dbh->prepare("UPDATE devices SET mac_addr = :mac_addr, hostname = :hostname WHERE id = :id");
-			$stmt->bindParam(":id", $this->id);
+			$stmt->bindValue(":id", $this->id);
 		}
 
 		// Bind parameters and execute.
-		$stmt->bindParam(":mac_addr", $this->mac_addr);
-		$stmt->bindParam(":hostname", $this->hostname);
+		$stmt->bindValue(":mac_addr", $this->mac_addr);
+		$stmt->bindValue(":hostname", $this->hostname);
 		$stmt->execute();
 
 		// Set the device ID.
