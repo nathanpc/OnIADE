@@ -64,9 +64,8 @@ function check_required_params() {
 check_required_params();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-	$device = null;
-
 	// User wants information about a device.
+	$device = null;
 	if (isset($_GET["id"])) {
 		$device = Device::FromID($_GET["id"]);
 	} else if (isset($_GET["macaddr"])) {
@@ -100,13 +99,30 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 	echo json_encode($response);
 } else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	// Edge device wants to add a device found in the network to the history.
+	$device = null;
+	
+	// Check if the device isn't already in the database.
+	$device = Device::FromMACAddress($_POST["macaddr"]);
+	if (is_null($device)) {
+		// Looks like we have a new one. Add it to the list first.
+		$device = new Device(null, $_POST["macaddr"]);
+		$device->save();
+	}
+
+	// Set hostname to device if available.
+	if (isset($_POST["hostname"])) {
+		$device->set_hostname($_POST["hostname"]);
+		$device->save();
+	}
+
 	http_response_code(200);
 	echo json_encode(array(
 		"info" => array(
 			"level" => 2,
 			"status" => "ok",
 			"message" => "Device added to history."
-		)
+		),
+		"device" => $device->as_array()
 	));
 }
 
