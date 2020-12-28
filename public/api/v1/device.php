@@ -22,9 +22,11 @@ function check_required_params() {
 		if (!isset($_POST["macaddr"])) {
 			http_response_code(424);
 			echo json_encode(array(
-				"level" => 0,
-				"status" => "error",
-				"message" => "Required parameter 'macaddr' wasn't specified."
+				"info" => array(
+					"level" => 0,
+					"status" => "error",
+					"message" => "Required parameter 'macaddr' wasn't specified."
+				)
 			));
 
 			exit(1);
@@ -34,9 +36,11 @@ function check_required_params() {
 		if (!isset($_GET["id"])) {
 			http_response_code(424);
 			echo json_encode(array(
-				"level" => 0,
-				"status" => "error",
-				"message" => "Required parameter 'id' wasn't specified."
+				"info" => array(
+					"level" => 0,
+					"status" => "error",
+					"message" => "Required parameter 'id' wasn't specified."
+				)
 			));
 
 			exit(1);
@@ -45,9 +49,12 @@ function check_required_params() {
 		// User requested with a method that is not supported by us.
 		http_response_code(400);
 		echo json_encode(array(
-			"level" => 0,
-			"status" => "error",
-			"message" => "Invalid request method " . $_SERVER["REQUEST_METHOD"] . "."
+			"info" => array(
+				"level" => 0,
+				"status" => "error",
+				"message" => "Invalid request method " .
+					$_SERVER["REQUEST_METHOD"] . "."
+			)
 		));
 
 		exit(1);
@@ -59,15 +66,17 @@ check_required_params();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
 	// User wants information about a device.
-	$device = Device::FromDatabase($_GET["id"]);
+	$device = Device::FromID($_GET["id"]);
 
 	// Check if we didn't get a device.
 	if (is_null($device)) {
 		http_response_code(400);
 		echo json_encode(array(
-			"level" => 0,
-			"status" => "error",
-			"message" => "Couldn't find a device with ID " . $_GET["id"] . "."
+			"info" => array(
+				"level" => 0,
+				"status" => "error",
+				"message" => "Couldn't find a device with ID " . $_GET["id"] . "."
+			)
 		));
 
 		return;
@@ -75,14 +84,24 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 	// Got ya a device.
 	http_response_code(200);
-	echo json_encode($device->as_array());
+	$response = array(
+		"info" => array(
+			"level" => 2,
+			"status" => "ok",
+			"message" => "Device found in database."
+		),
+		"device" => $device->as_array()
+	);
+	echo json_encode($response);
 } else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	// Edge device wants to add a device found in the network to the history.
 	http_response_code(200);
 	echo json_encode(array(
-		"level" => 2,
-		"status" => "ok",
-		"message" => "Device added to history."
+		"info" => array(
+			"level" => 2,
+			"status" => "ok",
+			"message" => "Device added to history."
+		)
 	));
 }
 
