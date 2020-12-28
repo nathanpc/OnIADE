@@ -8,6 +8,7 @@
  */
 
 require_once(__DIR__ . "/../../../src/Device.php");
+require_once(__DIR__ . "/../../../src/Floor.php");
 
 // Set the content type.
 header("Content-Type: application/json");
@@ -19,13 +20,13 @@ header("Content-Type: application/json");
 function check_required_params() {
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		// We've found a device and want to add it to the history.
-		if (!isset($_POST["macaddr"])) {
+		if (!(isset($_POST["macaddr"]) && isset($_POST["floor"]))) {
 			http_response_code(424);
 			echo json_encode(array(
 				"info" => array(
 					"level" => 0,
 					"status" => "error",
-					"message" => "Required parameter 'macaddr' wasn't specified."
+					"message" => "Required parameter 'macaddr' or 'floor' wasn't specified."
 				)
 			));
 
@@ -100,6 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 } else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	// Edge device wants to add a device found in the network to the history.
 	$device = null;
+	$floor = null;
 	
 	// Check if the device isn't already in the database.
 	$device = Device::FromMACAddress($_POST["macaddr"]);
@@ -115,6 +117,22 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		$device->save();
 	}
 
+	// Check if the floor exists.
+	$floor = Floor::FromNumber($_POST["floor"]);
+	if (is_null($floor)) {
+		http_response_code(400);
+		echo json_encode(array(
+			"info" => array(
+				"level" => 0,
+				"status" => "error",
+				"message" => "Couldn't find a floor with a number of '" .
+					$_POST["floor"] . "'. Device won't be added to history."
+			)
+		));
+
+		return;
+	}
+
 	http_response_code(200);
 	echo json_encode(array(
 		"info" => array(
@@ -122,7 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 			"status" => "ok",
 			"message" => "Device added to history."
 		),
-		"device" => $device->as_array()
+		"device" => $device->as_array(),
+		"floor" => $floor->as_array()
 	));
 }
 
