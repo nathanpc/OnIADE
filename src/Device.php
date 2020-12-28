@@ -103,7 +103,7 @@ class Device {
 
 		// Set the device ID.
 		if (is_null($this->id))
-			$this->id = $pdo->lastInsertId();
+			$this->id = $dbh->lastInsertId();
 	}
 
 	/**
