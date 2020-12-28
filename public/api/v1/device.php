@@ -33,13 +33,13 @@ function check_required_params() {
 		}
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		// We want some information about a device.
-		if (!isset($_GET["id"])) {
+		if (!(isset($_GET["id"]) || isset($_GET["macaddr"]))) {
 			http_response_code(424);
 			echo json_encode(array(
 				"info" => array(
 					"level" => 0,
 					"status" => "error",
-					"message" => "Required parameter 'id' wasn't specified."
+					"message" => "Required parameter 'id' or 'macaddr' wasn't specified."
 				)
 			));
 
@@ -52,8 +52,7 @@ function check_required_params() {
 			"info" => array(
 				"level" => 0,
 				"status" => "error",
-				"message" => "Invalid request method " .
-					$_SERVER["REQUEST_METHOD"] . "."
+				"message" => "Invalid request method " . $_SERVER["REQUEST_METHOD"] . "."
 			)
 		));
 
@@ -65,8 +64,14 @@ function check_required_params() {
 check_required_params();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
+	$device = null;
+
 	// User wants information about a device.
-	$device = Device::FromID($_GET["id"]);
+	if (isset($_GET["id"])) {
+		$device = Device::FromID($_GET["id"]);
+	} else if (isset($_GET["macaddr"])) {
+		$device = Device::FromMACAddress($_GET["macaddr"]);
+	}
 
 	// Check if we didn't get a device.
 	if (is_null($device)) {
@@ -75,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 			"info" => array(
 				"level" => 0,
 				"status" => "error",
-				"message" => "Couldn't find a device with ID " . $_GET["id"] . "."
+				"message" => "Couldn't find the requested device."
 			)
 		));
 

@@ -27,16 +27,16 @@ class Device {
 	}
 
 	/**
-	 * Constructs an object with the device information from the database.
+	 * Constructs an object with the device information from the database by 
+	 * using its ID.
 	 * 
 	 * @param  int    $id Device ID.
 	 * @return Device     Populated Device object with data from database, or
 	 *                    NULL if the ID wasn't found.
 	 */
 	public static function FromID($id) {
-		$dbh = Database::connect();
-		
 		// Get device from database.
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM devices WHERE id = :id");
 		$query->bindParam(":id", $id);
 		$query->execute();
@@ -48,7 +48,32 @@ class Device {
 		
 		// Create a new device object.
 		$dev = $dev[0];
-		return new Device($id, $dev["mac_addr"], $dev["hostname"]);
+		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"]);
+	}
+
+	/**
+	 * Constructs an object with the device information from the database by
+	 * using its MAC address.
+	 * 
+	 * @param  string $mac_address Device MAC address.
+	 * @return Device              Populated Device object with data from
+	 *                             database, or NULL if the ID wasn't found.
+	 */
+	public static function FromMACAddress($mac_addr) {
+		// Get device from database.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT * FROM devices WHERE mac_addr = :mac_addr");
+		$query->bindParam(":mac_addr", $mac_addr);
+		$query->execute();
+		$dev = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Check if the MAC address was invalid.
+		if (empty($dev))
+			return null;
+		
+		// Create a new device object.
+		$dev = $dev[0];
+		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"]);
 	}
 
 	/**
