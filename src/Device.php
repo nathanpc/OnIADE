@@ -77,6 +77,33 @@ class Device {
 	}
 
 	/**
+	 * Gets the device MAC address.
+	 * 
+	 * @return string Device's MAC address.
+	 */
+	public function get_mac_address() {
+		return $this->mac_addr;
+	}
+
+	/**
+	 * Sets the device hostname.
+	 * 
+	 * @param string $hostname Device's hostname.
+	 */
+	public function set_hostname($hostname) {
+		$this->hostname = $hostname;
+	}
+
+	/**
+	 * Gets the device hostname.
+	 * 
+	 * @return string Device's hostname.
+	 */
+	public function get_hostname() {
+		return $this->hostname;
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.
