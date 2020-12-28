@@ -77,6 +77,34 @@ class Device {
 	}
 
 	/**
+	 * Saves this device object into the database. This will create a new record
+	 * if an ID wasn't set previously.
+	 */
+	public function save() {
+		// Get database handle.
+		$dbh = Database::connect();
+
+		// Check if we are creating a new device or updating one.
+		if (is_null($this->id)) {
+			// Creating a new device.
+			$stmt = $dbh->prepare("INSERT INTO devices(mac_addr, hostname) VALUES (:mac_addr, :hostname)");
+		} else {
+			// Update an existing device.
+			$stmt = $dbh->prepare("UPDATE devices SET mac_addr = :mac_addr, hostname = :hostname WHERE id = :id");
+			$stmt->bindParam(":id", $this->id);
+		}
+
+		// Bind parameters and execute.
+		$stmt->bindParam(":mac_addr", $this->mac_addr);
+		$stmt->bindParam(":hostname", $this->hostname);
+		$stmt->execute();
+
+		// Set the device ID.
+		if (is_null($this->id))
+			$this->id = $pdo->lastInsertId();
+	}
+
+	/**
 	 * Gets the device MAC address.
 	 * 
 	 * @return string Device's MAC address.
