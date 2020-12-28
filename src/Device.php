@@ -106,6 +106,15 @@ class Device {
 	}
 
 	/**
+	 * Gets the device ID.
+	 * 
+	 * @return int Device ID.
+	 */
+	public function get_id() {
+		return $this->id;
+	}
+
+	/**
 	 * Gets the device MAC address.
 	 * 
 	 * @return string Device's MAC address.

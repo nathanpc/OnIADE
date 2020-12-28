@@ -77,6 +77,33 @@ class Floor {
 	}
 
 	/**
+	 * Gets the floor ID.
+	 * 
+	 * @return int Floor ID.
+	 */
+	public function get_id() {
+		return $this->id;
+	}
+
+	/**
+	 * Gets the floor number.
+	 * 
+	 * @return int Floor number.
+	 */
+	public function get_number() {
+		return $this->number;
+	}
+
+	/**
+	 * Gets the floor name.
+	 * 
+	 * @return string Floor name.
+	 */
+	public function get_name() {
+		return $this->name;
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.
