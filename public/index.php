@@ -36,8 +36,9 @@ function get_devices($floor, $ts = 1) {
 	$devices = array();
 
 	$dbh = Database::connect();
-	$query = $dbh->prepare("SELECT device_id FROM device_history WHERE floor_id = :floor_id");
+	$query = $dbh->prepare("SELECT DISTINCT device_id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
 	$query->bindValue(":floor_id", $floor->get_id());
+	$query->bindValue(":ts", $ts);
 	$query->execute();
 	$entries = $query->fetchAll(PDO::FETCH_ASSOC);
 
