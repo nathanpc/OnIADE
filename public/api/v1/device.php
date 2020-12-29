@@ -34,6 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 	get_device($device);
 } else if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	// Edge device wants to add a device found in the network to the history.
+	check_required_params("add_device_entry");
 	add_device_entry();
 }
 
@@ -53,8 +54,8 @@ function list_devices() {
 	);
 
 	// Go through devices adding them as arrays to the response.
-	foreach (Device::List() as $floor) {
-		array_push($response["list"], $floor->as_array());
+	foreach (Device::List() as $device) {
+		array_push($response["list"], $device->as_array());
 	}
 
 	// Send response.
@@ -156,18 +157,20 @@ function add_device_entry() {
  */
 function check_required_params($stage = null) {
 	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-		// We've found a device and want to add it to the history.
-		if (!(isset($_POST["macaddr"]) && isset($_POST["floor"]) && isset($_POST["ipaddr"]))) {
-			http_response_code(424);
-			echo json_encode(array(
-				"info" => array(
-					"level" => 0,
-					"status" => "error",
-					"message" => "Required parameter 'macaddr', 'ipaddr', or 'floor' wasn't specified."
-				)
-			));
+		if ($stage == "add_device_entry") {
+			// We've found a device and want to add it to the history.
+			if (!(isset($_POST["macaddr"]) && isset($_POST["floor"]) && isset($_POST["ipaddr"]))) {
+				http_response_code(424);
+				echo json_encode(array(
+					"info" => array(
+						"level" => 0,
+						"status" => "error",
+						"message" => "Required parameter 'macaddr', 'ipaddr', or 'floor' wasn't specified."
+					)
+				));
 
-			exit(1);
+				exit(1);
+			}
 		}
 	} else if ($_SERVER["REQUEST_METHOD"] == "GET") {
 		if ($stage == "get_device") {
