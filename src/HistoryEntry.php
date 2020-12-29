@@ -40,7 +40,7 @@ class HistoryEntry {
 	 * 
 	 * @param  int   $timespan Timespan in hours.
 	 * @param  Floor $floor    Want to filter by floor?
-	 * @return array           Array of Device objects found.
+	 * @return array           Array of HistoryEntry objects found.
 	 */
 	public static function List($timespan = 1, $floor = null) {
 		$devices = array();
@@ -49,9 +49,9 @@ class HistoryEntry {
 		// Create the query statement.
 		$query = null;
 		if ($floor == null) {
-			$query = $dbh->prepare("SELECT DISTINCT device_id FROM device_history WHERE dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
+			$query = $dbh->prepare("SELECT DISTINCT id FROM device_history WHERE dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
 		} else {
-			$query = $dbh->prepare("SELECT DISTINCT device_id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
+			$query = $dbh->prepare("SELECT DISTINCT id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
 			$query->bindValue(":floor_id", $floor->get_id());
 		}
 
@@ -60,9 +60,9 @@ class HistoryEntry {
 		$query->execute();
 		$entries = $query->fetchAll(PDO::FETCH_ASSOC);
 
-		// Go through the entries creating Device objects.
+		// Go through the entries creating HistoryEntry objects.
 		foreach ($entries as $entry)
-			array_push($devices, Device::FromID($entry["device_id"]));
+			array_push($devices, HistoryEntry::FromID($entry["id"]));
 
 		return $devices;
 	}
@@ -82,6 +82,35 @@ class HistoryEntry {
 		$entry->save();
 
 		return $entry;
+	}
+
+	/**
+	 * Creates an existing history entry object with information from the
+	 * database based on its ID.
+	 * 
+	 * @param  int          $id History entry ID.
+	 * @return HistoryEntry     Populated entry object.
+	 */
+	public static function FromID($id) {
+		// Get entry from database.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT * FROM device_history WHERE id = :id");
+		$query->bindValue(":id", $id);
+		$query->execute();
+		$entry = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Check if the ID was invalid.
+		if (empty($entry))
+			return null;
+
+		// Get "support" objects.
+		$entry = $entry[0];
+		$device = Device::FromID($entry["device_id"]);
+		$floor = Floor::FromID($entry["floor_id"]);
+
+		// Build our entry object.
+		return new HistoryEntry($entry["id"], $device, $floor, $entry["ip_addr"],
+			new DateTime($entry["dt"]));
 	}
 
 	/**
