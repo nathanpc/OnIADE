@@ -123,15 +123,47 @@ class HistoryEntry {
 	 * @return HistoryEntry               Populated entry object.
 	 */
 	public static function FromIPAddress($ip_addr, $hr_last_seen = 1) {
+		// Get last entry to base our Last Seen time frame.
+		$last_entry = HistoryEntry::LastEntry();
+		$last_dt = $last_entry->get_timestamp()->format("Y-m-d H:i:s");
+
 		// Get entry from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM device_history WHERE ip_addr = :ip_addr AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt DESC LIMIT 1");
+		$query = $dbh->prepare("SELECT * FROM device_history WHERE ip_addr = :ip_addr AND dt > :dt - INTERVAL :ts HOUR ORDER BY dt DESC LIMIT 1");
 		$query->bindValue(":ip_addr", $ip_addr);
+		$query->bindValue(":dt", $last_dt);
 		$query->bindValue(":ts", $hr_last_seen);
 		$query->execute();
 		$entry = $query->fetchAll(PDO::FETCH_ASSOC);
 
 		// Check if the ID was invalid.
+		if (empty($entry))
+			return null;
+
+		// Get "support" objects.
+		$entry = $entry[0];
+		$device = Device::FromID($entry["device_id"]);
+		$floor = Floor::FromID($entry["floor_id"]);
+
+		// Build our entry object.
+		return new HistoryEntry($entry["id"], $device, $floor,
+			$entry["ip_addr"], new DateTime($entry["dt"]));
+	}
+
+	/**
+	 * Gets the last entry that's available in the database in a pre-populated
+	 * HistoryEntry object.
+	 * 
+	 * @return HistoryEntry The last entry available in the database.
+	 */
+	public static function LastEntry() {
+		// Get entry from database.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT * FROM device_history ORDER BY id DESC LIMIT 1");
+		$query->execute();
+		$entry = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Check if there are any entries.
 		if (empty($entry))
 			return null;
 
