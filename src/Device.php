@@ -27,6 +27,27 @@ class Device {
 	}
 
 	/**
+	 * Gets a list of all the devices available.
+	 * 
+	 * @return array Array of Device objects.
+	 */
+	public static function List() {
+		$devices = array();
+
+		// Get devices from the database ordered.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT id FROM devices");
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Go through the results creating Device objects.
+		foreach ($rows as $device)
+			array_push($devices, Device::FromID($device["id"]));
+
+		return $devices;
+	}
+
+	/**
 	 * Constructs an object with the device information from the database by 
 	 * using its ID.
 	 * 
