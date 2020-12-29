@@ -16,36 +16,12 @@ require_once(__DIR__ . "/../src/HistoryEntry.php");
  * @return int Number of hours that we should get data for.
  */
 function get_timespan() {
-	$ts = 1;
-
 	// Get from GET parameters.
+	$ts = 1;
 	if (isset($_GET["ts"]))
 		$ts = (int)$_GET["ts"];
 
 	return $ts;
-}
-
-/**
- * Gets all of the devices that are currently in a specific floor.
- * 
- * @param  Floor $floor Desired floor to check out.
- * @param  int   $ts    Timespan in hours to get devices.
- * @return array        Array of Device objects currently in the floor.
- */
-function get_devices($floor, $ts = 1) {
-	$devices = array();
-
-	$dbh = Database::connect();
-	$query = $dbh->prepare("SELECT DISTINCT device_id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
-	$query->bindValue(":floor_id", $floor->get_id());
-	$query->bindValue(":ts", $ts);
-	$query->execute();
-	$entries = $query->fetchAll(PDO::FETCH_ASSOC);
-
-	foreach ($entries as $entry)
-		array_push($devices, Device::FromID($entry["device_id"]));
-
-	return $devices;
 }
 
 ?>
@@ -68,7 +44,7 @@ function get_devices($floor, $ts = 1) {
 			</h3>
 
 			<ul class="list-group">
-				<?php foreach (get_devices($floor, get_timespan()) as $device) { ?>
+				<?php foreach (HistoryEntry::List(get_timespan(), $floor) as $device) { ?>
 					<li class="list-group-item"><?= $device->get_hostname() ?></li>
 				<?php } ?>
 			</ul>

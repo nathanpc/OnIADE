@@ -35,6 +35,39 @@ class HistoryEntry {
 	}
 
 	/**
+	 * Gets a list of devices that were in the network within a specific 
+	 * timespan and on a specific floor.
+	 * 
+	 * @param  int   $timespan Timespan in hours.
+	 * @param  Floor $floor    Want to filter by floor?
+	 * @return array           Array of Device objects found.
+	 */
+	public static function List($timespan = 1, $floor = null) {
+		$devices = array();
+		$dbh = Database::connect();
+
+		// Create the query statement.
+		$query = null;
+		if ($floor == null) {
+			$query = $dbh->prepare("SELECT DISTINCT device_id FROM device_history WHERE dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
+		} else {
+			$query = $dbh->prepare("SELECT DISTINCT device_id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt");
+			$query->bindValue(":floor_id", $floor->get_id());
+		}
+
+		// Bind common values and fetch devices.
+		$query->bindValue(":ts", $timespan);
+		$query->execute();
+		$entries = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Go through the entries creating Device objects.
+		foreach ($entries as $entry)
+			array_push($devices, Device::FromID($entry["device_id"]));
+
+		return $devices;
+	}
+
+	/**
 	 * Creates a new history entry object and automatically inserts it into the
 	 * database.
 	 * 
