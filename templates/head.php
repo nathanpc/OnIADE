@@ -1,5 +1,6 @@
 <?php $config = require(__DIR__ . "/../config/config.php"); ?>
 <?php require_once(__DIR__ . "/../src/Database.php"); ?>
+<?php include_once(__DIR__ . "/../src/DeviceSpy.php"); ?>
 
 <!DOCTYPE html>
 <html lang="en">
