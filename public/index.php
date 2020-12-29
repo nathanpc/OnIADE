@@ -27,8 +27,6 @@ function get_timespan() {
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
-	<script type="text/javascript" src="/assets/js/main.js"></script>
-
 	<!-- Main Body -->
 	<div class="container">
 		<!-- Timespan Selector -->
