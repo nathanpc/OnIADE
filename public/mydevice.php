@@ -19,7 +19,7 @@ $entry = HistoryEntry::FromIPAddress(DeviceSpy::get_client_ip())
 		<?php if (is_null($entry)) { ?>
 			<div style="text-align: center;">
 				<h1>Device not found</h1>
-				<p>Sorry but we couldn't find your device in the database. Looks like you've reached us so fast that our server was unable to track you previously. Wait a couple of minutes and our highly motivated digital slaves will find your device and add it to our database.</p>
+				<p>Sorry but we couldn't find your device in the database. Looks like you've reached us so fast that our server was unable to track you previously. Please wait a couple of minutes for our highly motivated peaceful and privacy-loving robots to find your device and add it to our database.</p>
 			</div>
 
 			<br>
