@@ -27,6 +27,27 @@ class Floor {
 	}
 
 	/**
+	 * Gets a list of all the floors available.
+	 * 
+	 * @return array Array of Floor objects.
+	 */
+	public static function List() {
+		$floors = array();
+
+		// Get floors from the database ordered.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT id FROM floors ORDER BY number ASC");
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Go through the results creating Floor objects.
+		foreach ($rows as $floor)
+			array_push($floors, Floor::FromID($floor["id"]));
+
+		return $floors;
+	}
+
+	/**
 	 * Constructs an object with the floor information from the database by 
 	 * using its ID.
 	 * 

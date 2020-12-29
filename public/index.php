@@ -26,25 +26,6 @@ function get_timespan() {
 }
 
 /**
- * Gets all of the available floors in ascending order for us.
- * 
- * @return array Array with all the floors as Floor objects.
- */
-function get_floors() {
-	$floors = array();
-
-	$dbh = Database::connect();
-	$query = $dbh->prepare("SELECT id FROM floors ORDER BY number ASC");
-	$query->execute();
-	$rows = $query->fetchAll(PDO::FETCH_ASSOC);
-
-	foreach ($rows as $floor)
-		array_push($floors, Floor::FromID($floor["id"]));
-
-	return $floors;
-}
-
-/**
  * Gets all of the devices that are currently in a specific floor.
  * 
  * @param  Floor $floor Desired floor to check out.
@@ -66,8 +47,6 @@ function get_devices($floor, $ts = 1) {
 	return $devices;
 }
 
-// Get our floors.
-$floors = get_floors();
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
@@ -81,7 +60,7 @@ $floors = get_floors();
 		<br>
 
 		<!-- Floors -->
-		<?php foreach ($floors as $floor) { ?>
+		<?php foreach (Floor::List() as $floor) { ?>
 			<h3>
 				<?= $floor->get_number() ?>
 				<small class="text-muted"><?= $floor->get_name() ?></small>

@@ -16,21 +16,7 @@ header("Content-Type: application/json");
  * not present.
  */
 function check_required_params() {
-	if ($_SERVER["REQUEST_METHOD"] == "GET") {
-		// We want some information about a floor.
-		if (!(isset($_GET["id"]) || isset($_GET["number"]))) {
-			http_response_code(424);
-			echo json_encode(array(
-				"info" => array(
-					"level" => 0,
-					"status" => "error",
-					"message" => "Required parameter 'id' or 'number' wasn't specified."
-				)
-			));
-
-			exit(1);
-		}
-	} else {
+	if ($_SERVER["REQUEST_METHOD"] != "GET") {
 		// User requested with a method that is not supported by us.
 		http_response_code(400);
 		echo json_encode(array(
@@ -49,6 +35,29 @@ function check_required_params() {
 check_required_params();
 
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
+	// Check if the user wants a list of the floors.
+	if (!isset($_GET["id"]) && !isset($_GET["number"])) {
+		// Build the base response.
+		http_response_code(200);
+		$response = array(
+			"info" => array(
+				"level" => 2,
+				"status" => "ok",
+				"message" => "Floor found in database."
+			),
+			"list" => array()
+		);
+
+		// Go through floors adding them as arrays to the response.
+		foreach (Floor::List() as $floor) {
+			array_push($response["list"], $floor->as_array());
+		}
+
+		// Send response.
+		echo json_encode($response);
+		return;
+	}
+
 	// User wants information about a floor.
 	$floor = null;
 	if (isset($_GET["id"])) {
