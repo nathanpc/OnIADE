@@ -15,6 +15,10 @@ return (object) array(
 		"dbname" => "oniade",
 		"user" => "iade",
 		"password" => "password"
+	),
+	"dev" => (object)array(
+		"env" => true,
+		"host_ip" => "192.168.1.15"
 	)
 );
 
