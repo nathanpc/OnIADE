@@ -58,7 +58,7 @@ class Device {
 	public static function FromID($id) {
 		// Get device from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM devices WHERE id = :id");
+		$query = $dbh->prepare("SELECT * FROM devices WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
 		$dev = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -84,7 +84,7 @@ class Device {
 	public static function FromMACAddress($mac_addr) {
 		// Get device from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM devices WHERE mac_addr = :mac_addr");
+		$query = $dbh->prepare("SELECT * FROM devices WHERE mac_addr = :mac_addr LIMIT 1");
 		$query->bindValue(":mac_addr", $mac_addr);
 		$query->execute();
 		$dev = $query->fetchAll(PDO::FETCH_ASSOC);

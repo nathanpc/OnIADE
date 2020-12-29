@@ -94,7 +94,7 @@ class HistoryEntry {
 	public static function FromID($id) {
 		// Get entry from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM device_history WHERE id = :id");
+		$query = $dbh->prepare("SELECT * FROM device_history WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
 		$entry = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -125,7 +125,7 @@ class HistoryEntry {
 	public static function FromIPAddress($ip_addr, $hr_last_seen = 1) {
 		// Get entry from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM device_history WHERE ip_addr = :ip_addr AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt DESC");
+		$query = $dbh->prepare("SELECT * FROM device_history WHERE ip_addr = :ip_addr AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt DESC LIMIT 1");
 		$query->bindValue(":ip_addr", $ip_addr);
 		$query->bindValue(":ts", $hr_last_seen);
 		$query->execute();

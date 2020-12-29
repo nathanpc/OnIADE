@@ -58,7 +58,7 @@ class Floor {
 	public static function FromID($id) {
 		// Get floor from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM floors WHERE id = :id");
+		$query = $dbh->prepare("SELECT * FROM floors WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
 		$floor = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -83,7 +83,7 @@ class Floor {
 	public static function FromNumber($number) {
 		// Get device from database.
 		$dbh = Database::connect();
-		$query = $dbh->prepare("SELECT * FROM floors WHERE number = :number");
+		$query = $dbh->prepare("SELECT * FROM floors WHERE number = :number LIMIT 1");
 		$query->bindValue(":number", $number);
 		$query->execute();
 		$floor = $query->fetchAll(PDO::FETCH_ASSOC);
