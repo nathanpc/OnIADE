@@ -11,6 +11,21 @@ require_once(__DIR__ . "/../src/Device.php");
 require_once(__DIR__ . "/../src/HistoryEntry.php");
 
 /**
+ * Gets the current timespan we should be working with.,
+ * 
+ * @return int Number of hours that we should get data for.
+ */
+function get_timespan() {
+	$ts = 1;
+
+	// Get from GET parameters.
+	if (isset($_GET["ts"]))
+		$ts = (int)$_GET["ts"];
+
+	return $ts;
+}
+
+/**
  * Gets all of the available floors in ascending order for us.
  * 
  * @return array Array with all the floors as Floor objects.
@@ -33,9 +48,10 @@ function get_floors() {
  * Gets all of the devices that are currently in a specific floor.
  * 
  * @param  Floor $floor Desired floor to check out.
+ * @param  int   $ts    Timespan in hours to get devices.
  * @return array        Array of Device objects currently in the floor.
  */
-function get_devices($floor) {
+function get_devices($floor, $ts = 1) {
 	$devices = array();
 
 	$dbh = Database::connect();
@@ -55,9 +71,16 @@ $floors = get_floors();
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
+	<script type="text/javascript" src="/assets/js/main.js"></script>
 
 	<!-- Main Body -->
 	<div class="container">
+		<!-- Timespan Selector -->
+		<label for="timespan" id="timespan-label" class="form-label">Showing devices that were on the network for the past <?= get_timespan() ?> hours</label>
+		<input type="range" id="timespan" class="form-range" min="1" max="24" step="1" value="<?= get_timespan() ?>" onchange="timespan_update(this.value, true)" oninput="timespan_update(this.value, false)">
+		<br>
+
+		<!-- Floors -->
 		<?php foreach ($floors as $floor) { ?>
 			<h3>
 				<?= $floor->get_number() ?>
@@ -65,7 +88,7 @@ $floors = get_floors();
 			</h3>
 
 			<ul class="list-group">
-				<?php foreach (get_devices($floor) as $device) { ?>
+				<?php foreach (get_devices($floor, get_timespan()) as $device) { ?>
 					<li class="list-group-item"><?= $device->get_hostname() ?></li>
 				<?php } ?>
 			</ul>
