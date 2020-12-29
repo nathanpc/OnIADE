@@ -44,8 +44,8 @@ function get_timespan() {
 			</h3>
 
 			<ul class="list-group">
-				<?php foreach (HistoryEntry::List(get_timespan(), $floor) as $device) { ?>
-					<li class="list-group-item"><?= $device->get_hostname() ?></li>
+				<?php foreach (HistoryEntry::List(get_timespan(), $floor) as $entry) { ?>
+					<li class="list-group-item"><?= $entry->get_device()->get_hostname() ?></li>
 				<?php } ?>
 			</ul>
 

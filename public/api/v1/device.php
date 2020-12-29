@@ -18,7 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 	// Check if we just want a device list.
 	if (!isset($_GET["id"]) && !isset($_GET["macaddr"])) {
-		list_devices();
+		if (isset($_GET["ts"])) {
+			// We want a device history.
+			$floor = null;
+			if (isset($_GET["floor"]))
+				$floor = Floor::FromNumber($_GET["floor"]);
+
+			// List device history.
+			get_history($_GET["ts"], $floor);
+		} else {
+			// Just list the devices in the database.
+			list_devices();
+		}
+
 		return;
 	}
 
@@ -36,6 +48,33 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 	// Edge device wants to add a device found in the network to the history.
 	check_required_params("add_device_entry");
 	add_device_entry();
+}
+
+/**
+ * Gets a history of the devices in a specific timespan and floor.
+ * 
+ * @param int   $timespan Timespan in hours.
+ * @param Floor $floor    Floor to filter devices by.
+ */
+function get_history($timespan, $floor = null) {
+	// Build the base response.
+	http_response_code(200);
+	$response = array(
+		"info" => array(
+			"level" => 2,
+			"status" => "ok",
+			"message" => "Devices history found in database."
+		),
+		"list" => array()
+	);
+
+	// Go through devices adding them as arrays to the response.
+	foreach (HistoryEntry::List($timespan, $floor) as $entry) {
+		array_push($response["list"], $entry->as_array());
+	}
+
+	// Send response.
+	echo json_encode($response);
 }
 
 /**
