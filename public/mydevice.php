@@ -6,10 +6,11 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-include_once(__DIR__ . "/../src/DeviceSpy.php");
+namespace OnIADE;
+require __DIR__ . "/../vendor/autoload.php";
 
 // Get current device entry.
-$entry = HistoryEntry::FromIPAddress(DeviceSpy::get_client_ip());
+$entry = History\Entry::FromIPAddress(Device\Spy::get_client_ip());
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
@@ -21,7 +22,7 @@ $entry = HistoryEntry::FromIPAddress(DeviceSpy::get_client_ip());
 				<h1>Device not found</h1>
 				<p>Sorry but we couldn't find your device in the database. Looks like you've reached us so fast that our server was unable to track you previously. Please wait a couple of minutes for our highly motivated, peaceful, and privacy-loving robots to find your device and add it to our database.</p>
 				<br>
-				<p><i>Your IP address is: <?= DeviceSpy::get_client_ip() ?></i></p>
+				<p><i>Your IP address is: <?= Device\Spy::get_client_ip() ?></i></p>
 			</div>
 
 			<br>
@@ -59,7 +60,7 @@ $entry = HistoryEntry::FromIPAddress(DeviceSpy::get_client_ip());
 				<dd class="col-sm-9"><?= $entry->get_timestamp_elapsed() ?></dd>
 			</dl>
 
-			<pre><?php var_dump(DeviceSpy::get_user_agent()) ?></pre>
+			<pre><?php var_dump(Device\Spy::get_user_agent()) ?></pre>
 		<?php } ?>
 	</div>
 

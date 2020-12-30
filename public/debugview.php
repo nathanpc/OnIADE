@@ -1,3 +1,15 @@
+<?php
+/**
+ * debugview.php
+ * A little debug page just to check on the database.
+ * 
+ * @author Nathan Campos <nathan@innoveworkshop.com>
+ */
+
+namespace OnIADE;
+require __DIR__ . "/../vendor/autoload.php";
+?>
+
 <?php require(__DIR__ . "/../templates/head.php"); ?>
 
 	<!-- Main Body -->

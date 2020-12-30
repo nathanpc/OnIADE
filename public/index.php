@@ -6,9 +6,8 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-require_once(__DIR__ . "/../src/Floor.php");
-require_once(__DIR__ . "/../src/Device.php");
-require_once(__DIR__ . "/../src/HistoryEntry.php");
+namespace OnIADE;
+require __DIR__ . "/../vendor/autoload.php";
 
 /**
  * Gets the current timespan we should be working with.,
@@ -42,7 +41,7 @@ function get_timespan() {
 			</h3>
 
 			<ul class="list-group">
-				<?php foreach (HistoryEntry::List(get_timespan(), $floor) as $entry) { ?>
+				<?php foreach (History\Entry::List(get_timespan(), $floor) as $entry) { ?>
 					<li class="list-group-item"><?= $entry->get_device()->get_hostname() ?></li>
 				<?php } ?>
 			</ul>
