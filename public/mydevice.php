@@ -8,21 +8,19 @@
 
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
-
-// Get current device entry.
-$entry = History\Entry::FromIPAddress(Device\Spy::get_client_ip());
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
+<?php $entry = $spy->get_history_entry(); ?>
 
 	<!-- Main Body -->
 	<div class="container">
-		<?php if (is_null($entry)) { ?>
+		<?php if (!$spy->is_spyable()) { ?>
 			<div style="text-align: center;">
 				<h1>Device not found</h1>
 				<p>Sorry but we couldn't find your device in the database. Looks like you've reached us so fast that our server was unable to track you previously. Please wait a couple of minutes for our highly motivated, peaceful, and privacy-loving robots to find your device and add it to our database.</p>
 				<br>
-				<p><i>Your IP address is: <?= Device\Spy::get_client_ip() ?></i></p>
+				<p><i>Your IP address is: <?= $spy->get_ip_addr() ?></i></p>
 			</div>
 
 			<br>
@@ -59,8 +57,6 @@ $entry = History\Entry::FromIPAddress(Device\Spy::get_client_ip());
 				<dt class="col-sm-2">Last Seen</dt>
 				<dd class="col-sm-9"><?= $entry->get_timestamp_elapsed() ?></dd>
 			</dl>
-
-			<pre><?php var_dump(Device\Spy::get_user_agent()) ?></pre>
 		<?php } ?>
 	</div>
 

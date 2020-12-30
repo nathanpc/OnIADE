@@ -11,8 +11,21 @@ require __DIR__ . "/../../vendor/autoload.php";
 
 class Spy {
 	private $ip;
-	private $ua;
-	private $device;
+	private $hist_entry;
+
+	/**
+	 * Device spy object constructor.
+	 * 
+	 * @param string  $ip      IP of the device we are going to spy on.
+	 * @param boolean $prevent True if we don't want to spy on this one.
+	 */
+	public function __construct($ip = null, $prevent = false) {
+		$this->ip = $ip;
+		if (is_null($ip))
+			$this->ip = Spy::get_client_ip();
+
+		$this->hist_entry = \OnIADE\History\Entry::FromIPAddress($this->ip);
+	}
 
 	/**
 	 * Gets the client's User-Agent header.
@@ -54,6 +67,33 @@ class Spy {
 			$ip = $config->dev->host_ip;
 
 		return $ip;
+	}
+
+	/**
+	 * Checks if a device is currently spyable.
+	 * 
+	 * @return boolean True if the device is spyable.
+	 */
+	public function is_spyable() {
+		return !is_null($this->hist_entry);
+	}
+
+	/**
+	 * Gets the device IP address.
+	 * 
+	 * @return string Device IP address.
+	 */
+	public function get_ip_addr() {
+		return $this->ip;
+	}
+
+	/**
+	 * Gets the last history entry of this device.
+	 * 
+	 * @return History\Entry Device's history entry.
+	 */
+	public function get_history_entry() {
+		return $this->hist_entry;
 	}
 }
 

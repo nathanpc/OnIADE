@@ -1,5 +1,6 @@
 <?php $config = require(__DIR__ . "/../config/config.php"); ?>
 <?php require __DIR__ . "/../vendor/autoload.php"; ?>
+<?php $spy = new \OnIADE\Device\Spy(); ?>
 
 <!DOCTYPE html>
 <html lang="en">
