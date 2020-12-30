@@ -11,6 +11,8 @@
 					Designed and built by <a href="https://nathancampos.me/">@nathanpc</a> and <a href="https://www.instagram.com/digobraga8/">@digobraga8</a>
 				</div>
 			</div>
+
+			<br>
 		</div>
 	</footer>
 </body>
