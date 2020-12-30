@@ -208,6 +208,33 @@ class Model {
 	}
 
 	/**
+	 * Gets the device manufacturer.
+	 * 
+	 * @return Type Device manufacturer.
+	 */
+	public function get_manufacturer() {
+		return $this->manufacturer;
+	}
+
+	/**
+	 * Gets the device name.
+	 * 
+	 * @return Type Device name.
+	 */
+	public function get_name() {
+		return $this->name;
+	}
+
+	/**
+	 * String representation of this object.
+	 * 
+	 * @return string String representation of this object.
+	 */
+	public function as_string() {
+		return $this->manufacturer . " " . $this->name;
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.

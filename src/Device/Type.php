@@ -162,6 +162,42 @@ class Type {
 	}
 
 	/**
+	 * Gets the device type key.
+	 * 
+	 * @return int Device type key.
+	 */
+	public function get_key() {
+		return $this->key;
+	}
+
+	/**
+	 * Gets the device type name.
+	 * 
+	 * @return int Device type name.
+	 */
+	public function get_name() {
+		return $this->name;
+	}
+
+	/**
+	 * Gets the device type subtype.
+	 * 
+	 * @return int Device type subtype.
+	 */
+	public function get_subtype() {
+		return $this->subtype;
+	}
+
+	/**
+	 * String representation of this object.
+	 * 
+	 * @return string String representation of this object.
+	 */
+	public function as_string() {
+		return $this->get_name();
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.

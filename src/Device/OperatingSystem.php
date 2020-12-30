@@ -172,12 +172,48 @@ class OperatingSystem {
 	}
 
 	/**
-	 * Gets the device model ID.
+	 * Gets the operating system ID.
 	 * 
-	 * @return int Device model ID.
+	 * @return int Operating system ID.
 	 */
 	public function get_id() {
 		return $this->id;
+	}
+
+	/**
+	 * Gets the operating system name.
+	 * 
+	 * @return string Operating system name.
+	 */
+	public function get_name() {
+		return $this->name;
+	}
+
+	/**
+	 * Gets the operating system version.
+	 * 
+	 * @return string Operating system version.
+	 */
+	public function get_version() {
+		return $this->version;
+	}
+
+	/**
+	 * Gets the operating system family.
+	 * 
+	 * @return string Operating system family.
+	 */
+	public function get_family() {
+		return $this->family;
+	}
+
+	/**
+	 * String representation of this object.
+	 * 
+	 * @return string String representation of this object.
+	 */
+	public function as_string() {
+		return $this->name . " " . $this->version;
 	}
 
 	/**
