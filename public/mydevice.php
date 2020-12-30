@@ -11,7 +11,11 @@ require __DIR__ . "/../vendor/autoload.php";
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
-<?php $entry = $spy->get_history_entry(); ?>
+<?php
+	$entry = $spy->get_history_entry();
+	$device = $entry->get_device();
+	$floor = $entry->get_floor();
+?>
 
 	<!-- Main Body -->
 	<div class="container">
@@ -30,17 +34,33 @@ require __DIR__ . "/../vendor/autoload.php";
 				<small class="text-muted">Some information we have about your current device</small>
 			</h3>
 			<dl class="row">
-				<dt class="col-sm-2">Internal ID</dt>
-				<dd class="col-sm-9"><?= $entry->get_device()->get_id() ?></dd>
+				<dt class="col-sm-2">Device Number</dt>
+				<dd class="col-sm-9"><?= $device->get_id() ?></dd>
 
 				<dt class="col-sm-2">Hostname</dt>
-				<dd class="col-sm-9"><?= $entry->get_device()->get_hostname() ?></dd>
+				<dd class="col-sm-9"><?= $device->get_hostname() ?></dd>
 
 				<dt class="col-sm-2">MAC Address</dt>
-				<dd class="col-sm-9"><?= $entry->get_device()->get_mac_address() ?></dd>
+				<dd class="col-sm-9"><?= $device->get_mac_address() ?></dd>
 				
 				<dt class="col-sm-2">Last IP Address</dt>
 				<dd class="col-sm-9"><?= $entry->get_ip_addr() ?></dd>
+
+				<dt class="col-sm-2">Type</dt>
+				<dd class="col-sm-9"><?= $device->get_type()->as_string() ?></dd>
+
+				<?php if (!is_null($device->get_model()->get_manufacturer())) { ?>
+					<dt class="col-sm-2">Manufacturer</dt>
+					<dd class="col-sm-9"><?= $device->get_model()->get_manufacturer() ?></dd>
+				<?php } ?>
+
+				<?php if (!is_null($device->get_model()->get_name())) { ?>
+					<dt class="col-sm-2">Model</dt>
+					<dd class="col-sm-9"><?= $device->get_model()->get_name() ?></dd>
+				<?php } ?>
+				
+				<dt class="col-sm-2">Operating System</dt>
+				<dd class="col-sm-9"><?= $device->get_os()->as_string() ?></dd>
 			</dl>
 
 			<h3>
@@ -49,10 +69,10 @@ require __DIR__ . "/../vendor/autoload.php";
 			</h3>
 			<dl class="row">
 				<dt class="col-sm-2">Floor Number</dt>
-				<dd class="col-sm-9"><?= $entry->get_floor()->get_number() ?></dd>
+				<dd class="col-sm-9"><?= $floor->get_number() ?></dd>
 				
 				<dt class="col-sm-2">Floor Name</dt>
-				<dd class="col-sm-9"><?= $entry->get_floor()->get_name() ?></dd>
+				<dd class="col-sm-9"><?= $floor->get_name() ?></dd>
 				
 				<dt class="col-sm-2">Last Seen</dt>
 				<dd class="col-sm-9"><?= $entry->get_timestamp_elapsed() ?></dd>
