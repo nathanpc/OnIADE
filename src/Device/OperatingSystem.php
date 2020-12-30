@@ -110,7 +110,7 @@ class OperatingSystem {
 	public static function FromDetails($name, $version, $family) {
 		// Build database query statement.
 		$dbh = \OnIADE\Database::connect();
-		$query = $dbh->prepare("SELECT * FROM operating_systems WHERE (name = :name) AND (version = :version) AND (family <=> :family) LIMIT 1");
+		$query = $dbh->prepare("SELECT * FROM operating_systems WHERE (name <=> :name) AND (version <=> :version) AND (family <=> :family) LIMIT 1");
 
 		// Bind parameters and execute.
 		$query->bindValue(":name", $name);
