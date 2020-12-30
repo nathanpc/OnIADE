@@ -21,9 +21,12 @@ class Device {
 	/**
 	 * Device class constructor.
 	 * 
-	 * @param int    $id       Device ID.
-	 * @param string $mac_addr MAC address.
-	 * @param string $hostname Hostname.
+	 * @param int                    $id       Device ID.
+	 * @param string                 $mac_addr MAC address.
+	 * @param string                 $hostname Hostname.
+	 * @param Device\Type            $type     Device type.
+	 * @param Device\Model           $model    Device model.
+	 * @param Device\OperatingSystem $os       Device operating system.
 	 */
 	public function __construct($id = null, $mac_addr = null, $hostname = null,
 			$type = null, $model = null, $os = null) {
@@ -78,7 +81,10 @@ class Device {
 		
 		// Create a new device object.
 		$dev = $dev[0];
-		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"]);
+		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"], 
+			Device\Type::FromID($dev["type_id"]),
+			Device\Model::FromID($dev["model_id"]),
+			Device\OperatingSystem::FromID($dev["os_id"]));
 	}
 
 	/**
@@ -104,7 +110,10 @@ class Device {
 		
 		// Create a new device object.
 		$dev = $dev[0];
-		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"]);
+		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"], 
+			Device\Type::FromID($dev["type_id"]),
+			Device\Model::FromID($dev["model_id"]),
+			Device\OperatingSystem::FromID($dev["os_id"]));
 	}
 
 	/**
