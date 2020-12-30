@@ -53,16 +53,13 @@ class RequestHeaders {
 		// Check if it exists before doing anything.
 		if ($check_exists) {
 			$req = RequestHeaders::FromDevice($device);
-			if (!is_null($req)) {
+			if (!is_null($req))
 				$req->set_headers($headers);
-				$req->save();
-
-				return $req;
-			}
 		}
 
-		// Create a new request headers object.
-		$req = new RequestHeaders(null, $device, $headers);
+		// Create a new object if needed and save our changes so far.
+		if (is_null($req))
+			$req = new RequestHeaders(null, $device, $headers);
 		$req->save();
 
 		// Create all the object is we need to propagate changes.
