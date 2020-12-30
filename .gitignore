@@ -1,3 +1,6 @@
+# Composer
+vendor/
+
 # Sublime Text
 *.sublime-*
 

@@ -1,0 +1,21 @@
+{
+	"name": "nathanpc/onaide",
+	"description": "A web application to track people inside IADE's building",
+	"authors": [
+		{
+			"name": "Nathan Campos",
+			"email": "nathan@innoveworkshop.com",
+			"homepage": "https://nathancampos.me/"
+		}
+	],
+	"require": {
+		"php": "^7.4",
+		"ext-pdo": "^7.4",
+		"ext-pdo_mysql": "^7.4"
+	},
+	"autoload": {
+		"psr-4": {
+			"OnIADE\\": "src/"
+		}
+	}
+}
