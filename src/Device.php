@@ -6,7 +6,9 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-require_once(__DIR__ . "/Database.php");
+namespace OnIADE;
+require __DIR__ . "/../vendor/autoload.php";
+use PDO;
 
 class Device {
 	private $id;
@@ -35,7 +37,7 @@ class Device {
 		$devices = array();
 
 		// Get devices from the database ordered.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$query = $dbh->prepare("SELECT id FROM devices");
 		$query->execute();
 		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -57,7 +59,7 @@ class Device {
 	 */
 	public static function FromID($id) {
 		// Get device from database.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$query = $dbh->prepare("SELECT * FROM devices WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -83,7 +85,7 @@ class Device {
 	 */
 	public static function FromMACAddress($mac_addr) {
 		// Get device from database.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$query = $dbh->prepare("SELECT * FROM devices WHERE mac_addr = :mac_addr LIMIT 1");
 		$query->bindValue(":mac_addr", $mac_addr);
 		$query->execute();
@@ -104,7 +106,7 @@ class Device {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new device or updating one.

@@ -1,14 +1,15 @@
 <?php
 /**
- * DeviceSpy.php
+ * Spy.php
  * Time to act like Facebook and Google! YAY!
  *
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-require_once(__DIR__ . "/HistoryEntry.php");
+namespace OnIADE\Device;
+require __DIR__ . "/../../vendor/autoload.php";
 
-class DeviceSpy {
+class Spy {
 	private $ip;
 	private $ua;
 	private $device;
@@ -48,7 +49,7 @@ class DeviceSpy {
 
 		// If we are running in a development environment make sure to fix the
 		// IP address if we are accessing from the host machine.
-		$config = require(__DIR__ . "/../config/config.php");
+		$config = require(__DIR__ . "/../../config/config.php");
 		if ($config->dev->env && ($ip == "127.0.0.1"))
 			$ip = $config->dev->host_ip;
 

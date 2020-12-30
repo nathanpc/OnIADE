@@ -6,6 +6,10 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
+namespace OnIADE;
+require __DIR__ . "/../vendor/autoload.php";
+use PDO;
+
 class Database {
 	/**
 	 * Connects to the database and returns a PDO object.
@@ -31,7 +35,7 @@ class Database {
 	 */
 	public static function get_html_table($name) {
 		$html = "<table class='table table-striped table-hover'>";
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 
 		// Get table columns.
 		$query = $dbh->prepare("DESCRIBE $name");

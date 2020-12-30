@@ -1,16 +1,17 @@
 <?php
 /**
- * HistoryEntry.php
+ * Entry.php
  * An abstraction class to work with entries in the device history.
  *
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-require_once(__DIR__ . "/Database.php");
-require_once(__DIR__ . "/Device.php");
-require_once(__DIR__ . "/Floor.php");
+namespace OnIADE\History;
+require __DIR__ . "/../../vendor/autoload.php";
+use PDO;
+use DateTime;
 
-class HistoryEntry {
+class Entry {
 	private $id;
 	private $device;
 	private $floor;
@@ -40,11 +41,11 @@ class HistoryEntry {
 	 * 
 	 * @param  int   $timespan Timespan in hours.
 	 * @param  Floor $floor    Want to filter by floor?
-	 * @return array           Array of HistoryEntry objects found.
+	 * @return array           Array of Entry objects found.
 	 */
 	public static function List($timespan = 1, $floor = null) {
 		$devices = array();
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 
 		// Create the query statement.
 		$query = null;
@@ -60,9 +61,9 @@ class HistoryEntry {
 		$query->execute();
 		$entries = $query->fetchAll(PDO::FETCH_ASSOC);
 
-		// Go through the entries creating HistoryEntry objects.
+		// Go through the entries creating Entry objects.
 		foreach ($entries as $entry)
-			array_push($devices, HistoryEntry::FromID($entry["id"]));
+			array_push($devices, Entry::FromID($entry["id"]));
 
 		return $devices;
 	}
@@ -74,11 +75,10 @@ class HistoryEntry {
 	 * @param  Device       $device   Device to be added to the history.
 	 * @param  Floor        $floor    In which floor said device is?
 	 * @param  string       $ip_addr  Device"s IP address.
-	 * @return HistoryEntry           Populated and stored entry object.
+	 * @return Entry           Populated and stored entry object.
 	 */
 	public static function Create($device, $floor, $ip_addr) {
-		$entry = new HistoryEntry(null, $device, $floor, $ip_addr,
-			new DateTime("NOW"));
+		$entry = new Entry(null, $device, $floor, $ip_addr, new DateTime("NOW"));
 		$entry->save();
 
 		return $entry;
@@ -89,11 +89,11 @@ class HistoryEntry {
 	 * database based on its ID.
 	 * 
 	 * @param  int          $id History entry ID.
-	 * @return HistoryEntry     Populated entry object.
+	 * @return Entry     Populated entry object.
 	 */
 	public static function FromID($id) {
 		// Get entry from database.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_history WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -105,11 +105,11 @@ class HistoryEntry {
 
 		// Get "support" objects.
 		$entry = $entry[0];
-		$device = Device::FromID($entry["device_id"]);
-		$floor = Floor::FromID($entry["floor_id"]);
+		$device = \OnIADE\Device::FromID($entry["device_id"]);
+		$floor = \OnIADE\Floor::FromID($entry["floor_id"]);
 
 		// Build our entry object.
-		return new HistoryEntry($entry["id"], $device, $floor,
+		return new Entry($entry["id"], $device, $floor,
 			$entry["ip_addr"], new DateTime($entry["dt"]));
 	}
 
@@ -120,15 +120,15 @@ class HistoryEntry {
 	 * @param  int          $ip_addr      History entry ID.
 	 * @param  int          $hr_last_seen Maximum number of hours to go back and
 	 *                                    search for a valid IP.
-	 * @return HistoryEntry               Populated entry object.
+	 * @return Entry               Populated entry object.
 	 */
 	public static function FromIPAddress($ip_addr, $hr_last_seen = 1) {
 		// Get last entry to base our Last Seen time frame.
-		$last_entry = HistoryEntry::LastEntry();
+		$last_entry = Entry::LastEntry();
 		$last_dt = $last_entry->get_timestamp()->format("Y-m-d H:i:s");
 
 		// Get entry from database.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_history WHERE ip_addr = :ip_addr AND dt > :dt - INTERVAL :ts HOUR ORDER BY dt DESC LIMIT 1");
 		$query->bindValue(":ip_addr", $ip_addr);
 		$query->bindValue(":dt", $last_dt);
@@ -142,23 +142,23 @@ class HistoryEntry {
 
 		// Get "support" objects.
 		$entry = $entry[0];
-		$device = Device::FromID($entry["device_id"]);
-		$floor = Floor::FromID($entry["floor_id"]);
+		$device = \OnIADE\Device::FromID($entry["device_id"]);
+		$floor = \OnIADE\Floor::FromID($entry["floor_id"]);
 
 		// Build our entry object.
-		return new HistoryEntry($entry["id"], $device, $floor,
+		return new Entry($entry["id"], $device, $floor,
 			$entry["ip_addr"], new DateTime($entry["dt"]));
 	}
 
 	/**
 	 * Gets the last entry that's available in the database in a pre-populated
-	 * HistoryEntry object.
+	 * Entry object.
 	 * 
-	 * @return HistoryEntry The last entry available in the database.
+	 * @return Entry The last entry available in the database.
 	 */
 	public static function LastEntry() {
 		// Get entry from database.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_history ORDER BY id DESC LIMIT 1");
 		$query->execute();
 		$entry = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -169,12 +169,12 @@ class HistoryEntry {
 
 		// Get "support" objects.
 		$entry = $entry[0];
-		$device = Device::FromID($entry["device_id"]);
-		$floor = Floor::FromID($entry["floor_id"]);
+		$device = \OnIADE\Device::FromID($entry["device_id"]);
+		$floor = \OnIADE\Floor::FromID($entry["floor_id"]);
 
 		// Build our entry object.
-		return new HistoryEntry($entry["id"], $device, $floor,
-			$entry["ip_addr"], new DateTime($entry["dt"]));
+		return new Entry($entry["id"], $device, $floor, $entry["ip_addr"],
+			new DateTime($entry["dt"]));
 	}
 
 	/**
@@ -183,7 +183,7 @@ class HistoryEntry {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = Database::connect();
+		$dbh = \OnIADE\Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new entry or updating one.
@@ -293,7 +293,7 @@ class HistoryEntry {
 	 * @return string Human-readable date and time of this entry.
 	 */
 	public function get_timestamp_elapsed() {
-		return HistoryEntry::time_since_string($this->datetime);
+		return Entry::time_since_string($this->datetime);
 	}
 
 	/**
