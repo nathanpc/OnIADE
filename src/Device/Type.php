@@ -160,6 +160,20 @@ class Type {
 	public function get_id() {
 		return $this->id;
 	}
+
+	/**
+	 * Array representation of this object. Perfect for use in JSON responses.
+	 * 
+	 * @return array Array representation of this object.
+	 */
+	public function as_array() {
+		return array(
+			"id" => $this->id,
+			"key" => $this->key,
+			"name" => $this->name,
+			"subtype" => $this->subtype
+		);
+	}
 }
 
 ?>

@@ -14,6 +14,9 @@ class Device {
 	private $id;
 	private $mac_addr;
 	private $hostname;
+	private $type;
+	private $model;
+	private $os;
 
 	/**
 	 * Device class constructor.
@@ -22,10 +25,14 @@ class Device {
 	 * @param string $mac_addr MAC address.
 	 * @param string $hostname Hostname.
 	 */
-	public function __construct($id = null, $mac_addr = null, $hostname = null) {
+	public function __construct($id = null, $mac_addr = null, $hostname = null,
+			$type = null, $model = null, $os = null) {
 		$this->id = $id;
 		$this->mac_addr = $mac_addr;
 		$this->hostname = $hostname;
+		$this->type = $type;
+		$this->model = $model;
+		$this->os = $os;
 	}
 
 	/**
@@ -171,11 +178,28 @@ class Device {
 	 * @return array Array representation of this object.
 	 */
 	public function as_array() {
-		return array(
+		$arr = array(
 			"id" => $this->id,
 			"mac_addr" => $this->mac_addr,
-			"hostname" => $this->hostname
+			"hostname" => $this->hostname,
+			"type" => null,
+			"model" => null,
+			"os" => null
 		);
+
+		// Device type.
+		if (!is_null($this->type))
+			$arr["type"] = $this->type->as_array();
+
+		// Device model.
+		if (!is_null($this->model))
+			$arr["model"] = $this->model->as_array();
+
+		// Operating system.
+		if (!is_null($this->os))
+			$arr["os"] = $this->os->as_array();
+
+		return $arr;
 	}
 }
 
