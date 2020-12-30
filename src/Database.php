@@ -14,16 +14,22 @@ class Database {
 	/**
 	 * Connects to the database and returns a PDO object.
 	 * 
-	 * @return PDO PDO object of the project database.
+	 * @param  boolean $enable_errors Enable PDO to throw exceptions when an
+	 *                                error occurs instead of failling silently.
+	 * @return PDO                    PDO object of the project database.
 	 */
-	public static function connect() {
+	public static function connect($enable_errors = true) {
 		// Fetch the configuration file.
 		$config = require(__DIR__ . "/../config/config.php");
 		$config = $config->database;
 
 		// Build a data source name and create PDO.
 		$dsn = "mysql:host=" . $config->host . ";dbname=" . $config->dbname;
-		return new PDO($dsn, $config->user, $config->password);
+		$pdo = new PDO($dsn, $config->user, $config->password);
+		if ($enable_errors)
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		return $pdo;
 	}
 
 	/**

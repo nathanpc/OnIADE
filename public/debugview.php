@@ -34,15 +34,27 @@ require __DIR__ . "/../vendor/autoload.php";
 
 		<h3>
 			Device Types
-			<small class="text-muted">What sizes do we have?</small>
+			<small class="text-muted">How diverse are our devices?</small>
 		</h3>
 		<?= Database::get_html_table("device_types") ?>
 
 		<h3>
+			Device Models
+			<small class="text-muted">What models of devices do we have?</small>
+		</h3>
+		<?= Database::get_html_table("device_models") ?>
+
+		<h3>
 			Operating Systems
-			<small class="text-muted">We all know Linux is superior</small>
+			<small class="text-muted">We all know Linux is the superior one here</small>
 		</h3>
 		<?= Database::get_html_table("operating_systems") ?>
+
+		<h3>
+			Request Headers
+			<small class="text-muted">Sweet, sweeet spying</small>
+		</h3>
+		<?= Database::get_html_table("request_headers") ?>
 
 		<h3>
 			Devices

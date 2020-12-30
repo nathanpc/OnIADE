@@ -12,6 +12,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 class Spy {
 	private $ip;
 	private $hist_entry;
+	private $headers;
 
 	/**
 	 * Device spy object constructor.
@@ -20,11 +21,22 @@ class Spy {
 	 * @param boolean $prevent True if we don't want to spy on this one.
 	 */
 	public function __construct($ip = null, $prevent = false) {
+		// Get device IP.
 		$this->ip = $ip;
 		if (is_null($ip))
 			$this->ip = Spy::get_client_ip();
 
-		$this->hist_entry = \OnIADE\History\Entry::FromIPAddress($this->ip);
+		// Get history entry.
+		$this->hist_entry = null;
+		if (!$prevent)
+			$this->hist_entry = \OnIADE\History\Entry::FromIPAddress($this->ip);
+
+		// Get request headers.
+		$this->headers = null;
+		if (!$prevent)
+			$this->headers = RequestHeaders::Create(
+				$this->hist_entry->get_device(),
+				getallheaders());
 	}
 
 	/**
@@ -94,6 +106,15 @@ class Spy {
 	 */
 	public function get_history_entry() {
 		return $this->hist_entry;
+	}
+
+	/**
+	 * Gets detailed information about the device.
+	 * 
+	 * @return RequestHeaders Detailed information about the device.
+	 */
+	public function get_request_headers() {
+		return $this->headers;
 	}
 }
 
