@@ -64,8 +64,17 @@ class RequestHeaders {
 
 		// Create all the object is we need to propagate changes.
 		if ($propagate) {
-			OperatingSystem::CreateFromBrowserParser($req->get_browser_parser());
-			Model::CreateFromBrowserParser($req->get_browser_parser(), $propagate);
+			$os = OperatingSystem::CreateFromBrowserParser(
+				$req->get_browser_parser());
+			$model = Model::CreateFromBrowserParser($req->get_browser_parser(),
+				$propagate);
+			$type = $model->get_type();
+
+			// Associate related objects with device.
+			$device->set_type($type);
+			$device->set_model($model);
+			$device->set_os($os);
+			$device->save();
 		}
 
 		return $req;

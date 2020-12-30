@@ -128,16 +128,34 @@ class Device {
 		// Check if we are creating a new device or updating one.
 		if (is_null($this->id)) {
 			// Creating a new device.
-			$stmt = $dbh->prepare("INSERT INTO devices(mac_addr, hostname) VALUES (:mac_addr, :hostname)");
+			$stmt = $dbh->prepare("INSERT INTO devices(mac_addr, hostname, type_id, model_id, os_id) VALUES (:mac_addr, :hostname, :type_id, :model_id, :os_id)");
 		} else {
 			// Update an existing device.
-			$stmt = $dbh->prepare("UPDATE devices SET mac_addr = :mac_addr, hostname = :hostname WHERE id = :id");
+			$stmt = $dbh->prepare("UPDATE devices SET mac_addr = :mac_addr, hostname = :hostname, type_id = :type_id, model_id = :model_id, os_id = :os_id WHERE id = :id");
 			$stmt->bindValue(":id", $this->id);
 		}
+
+		// Device type.
+		$type_id = null;
+		if (!is_null($this->type))
+			$type_id = $this->type->get_id();
+
+		// Device model.
+		$model_id = null;
+		if (!is_null($this->model))
+			$model_id = $this->model->get_id();
+
+		// Device operating system.
+		$os_id = null;
+		if (!is_null($this->os))
+			$os_id = $this->os->get_id();
 
 		// Bind parameters and execute.
 		$stmt->bindValue(":mac_addr", $this->mac_addr);
 		$stmt->bindValue(":hostname", $this->hostname);
+		$stmt->bindValue(":type_id", $type_id);
+		$stmt->bindValue(":model_id", $model_id);
+		$stmt->bindValue(":os_id", $os_id);
 		$stmt->execute();
 
 		// Set the device ID.
@@ -179,6 +197,60 @@ class Device {
 	 */
 	public function get_hostname() {
 		return $this->hostname;
+	}
+
+	/**
+	 * Gets the device type.
+	 * 
+	 * @return Device\Type Device type object.
+	 */
+	public function get_type() {
+		return $this->type;
+	}
+
+	/**
+	 * Sets the device type.
+	 * 
+	 * @param Device\Type $type Device type object.
+	 */
+	public function set_type($type) {
+		$this->type = $type;
+	}
+
+	/**
+	 * Gets the device model.
+	 * 
+	 * @return Device\Model Device model object.
+	 */
+	public function get_model() {
+		return $this->model;
+	}
+
+	/**
+	 * Sets the device model.
+	 * 
+	 * @param Device\Model $model Device model object.
+	 */
+	public function set_model($model) {
+		$this->model = $model;
+	}
+
+	/**
+	 * Gets the device operating system.
+	 * 
+	 * @return Device\OperatingSystem Device operating system object.
+	 */
+	public function get_os() {
+		return $this->os;
+	}
+
+	/**
+	 * Sets the device operating system.
+	 * 
+	 * @return Device\OperatingSystem $os Device operating system object.
+	 */
+	public function set_os($os) {
+		$this->os = $os;
 	}
 
 	/**

@@ -101,7 +101,7 @@ class Model {
 		
 		// Create a new device model object.
 		$model = $model[0];
-		return new Model($model["id"], $type["manufacturer"], $type["name"],
+		return new Model($model["id"], $model["manufacturer"], $model["name"],
 			Type::FromID($model["type_id"]));
 	}
 
@@ -196,6 +196,15 @@ class Model {
 	 */
 	public function get_id() {
 		return $this->id;
+	}
+
+	/**
+	 * Gets the device type.
+	 * 
+	 * @return Type Device type.
+	 */
+	public function get_type() {
+		return $this->type;
 	}
 
 	/**
