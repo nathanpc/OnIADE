@@ -7,9 +7,8 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-require_once(__DIR__ . "/../../../src/Device.php");
-require_once(__DIR__ . "/../../../src/Floor.php");
-require_once(__DIR__ . "/../../../src/HistoryEntry.php");
+namespace OnIADE;
+require __DIR__ . "/../../../vendor/autoload.php";
 
 header("Content-Type: application/json");
 check_required_params();
@@ -69,7 +68,7 @@ function get_history($timespan, $floor = null) {
 	);
 
 	// Go through devices adding them as arrays to the response.
-	foreach (HistoryEntry::List($timespan, $floor) as $entry) {
+	foreach (History\Entry::List($timespan, $floor) as $entry) {
 		array_push($response["list"], $entry->as_array());
 	}
 
@@ -175,7 +174,7 @@ function add_device_entry() {
 	}
 
 	// Create a new device entry.
-	$entry = HistoryEntry::Create($device, $floor, $_POST["ipaddr"]);
+	$entry = History\Entry::Create($device, $floor, $_POST["ipaddr"]);
 
 	http_response_code(200);
 	echo json_encode(array(

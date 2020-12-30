@@ -6,7 +6,8 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-require_once(__DIR__ . "/../../../src/Floor.php");
+namespace OnIADE;
+require __DIR__ . "/../../../vendor/autoload.php";
 
 header("Content-Type: application/json");
 check_required_params();
