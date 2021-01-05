@@ -15,6 +15,7 @@ class OperatingSystem {
 	private $name;
 	private $version;
 	private $family;
+	private $icon;
 
 	/**
 	 * Device operating system object constructor.
@@ -23,13 +24,19 @@ class OperatingSystem {
 	 * @param string $name    Its proper name.
 	 * @param string $version OS version.
 	 * @param string $family  OS family.
+	 * @param Icon   $icon    OS icon.
 	 */
 	public function __construct($id = null, $name = null, $version = null,
-			$family = null) {
+			$family = null, $icon = null) {
 		$this->id = $id;
 		$this->name = $name;
 		$this->version = $version;
 		$this->family = $family;
+		$this->icon = $icon;
+
+		// Handle empty icons.
+		if (is_null($this->icon))
+			$this->icon = new Icon();
 	}
 
 	/**
@@ -38,14 +45,16 @@ class OperatingSystem {
 	 * @param  string          $name    Its proper name.
 	 * @param  string          $version OS version.
 	 * @param  string          $family  OS family.
+	 * @param  Icon            $icon    OS icon.
 	 * @return OperatingSystem          Populated device OS object.
 	 */
-	public static function Create($name = null, $version = null, $family = null) {
+	public static function Create($name = null, $version = null, $family = null,
+			$icon = null) {
 		// Check for a null name.
 		if (is_null($name))
 			return null;
-		
-		$os = new OperatingSystem(null, $name, $version, $family);
+
+		$os = new OperatingSystem(null, $name, $version, $family, $icon);
 		$os->save();
 
 		return $os;
@@ -98,7 +107,8 @@ class OperatingSystem {
 		
 		// Create a new device OS object.
 		$os = $os[0];
-		return new OperatingSystem($os["id"], $os["name"], $os["version"], $os["family"]);
+		return new OperatingSystem($os["id"], $os["name"], $os["version"],
+			$os["family"], new Icon($os["icon"], $os["icon_color"]));
 	}
 
 	/**
@@ -129,7 +139,8 @@ class OperatingSystem {
 		
 		// Create a new device OS object.
 		$os = $os[0];
-		return new OperatingSystem($os["id"], $os["name"], $os["version"], $os["family"]);
+		return new OperatingSystem($os["id"], $os["name"], $os["version"],
+			$os["family"], new Icon($os["icon"], $os["icon_color"]));
 	}
 
 	/**
@@ -157,10 +168,10 @@ class OperatingSystem {
 		// Check if we are creating a new device model or updating one.
 		if (is_null($this->id)) {
 			// Creating a new model.
-			$stmt = $dbh->prepare("INSERT INTO operating_systems(name, version, family) VALUES (:name, :version, :family)");
+			$stmt = $dbh->prepare("INSERT INTO operating_systems(name, version, family, icon, icon_color) VALUES (:name, :version, :family, :icon, :icon_color)");
 		} else {
 			// Update an existing model.
-			$stmt = $dbh->prepare("UPDATE operating_systems SET name = :name, version = :version, family = :family WHERE id = :id");
+			$stmt = $dbh->prepare("UPDATE operating_systems SET name = :name, version = :version, family = :family, icon = :icon, icon_color = :icon_color WHERE id = :id");
 			$stmt->bindValue(":id", $this->id);
 		}
 
@@ -168,6 +179,8 @@ class OperatingSystem {
 		$stmt->bindValue(":name", $this->name);
 		$stmt->bindValue(":version", $this->version);
 		$stmt->bindValue(":family", $this->family);
+		$stmt->bindValue(":icon", $this->icon->get_name());
+		$stmt->bindValue(":icon_color", $this->icon->get_color());
 		$stmt->execute();
 
 		// Set the ID.
@@ -212,6 +225,15 @@ class OperatingSystem {
 	}
 
 	/**
+	 * Gets the operating system icon.
+	 * 
+	 * @return Icon Operating system icon.
+	 */
+	public function get_icon() {
+		return $this->icon;
+	}
+
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return string String representation of this object.
@@ -230,7 +252,8 @@ class OperatingSystem {
 			"id" => $this->id,
 			"name" => $this->name,
 			"version" => $this->version,
-			"family" => $this->family
+			"family" => $this->family,
+			"icon" => $this->icon->as_array()
 		);
 	}
 }

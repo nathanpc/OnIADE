@@ -15,7 +15,7 @@ require __DIR__ . "/../vendor/autoload.php";
 	$entry = $spy->get_history_entry();
 	$device = null;
 	$floor = null;
-	
+
 	if (!is_null($entry)) {
 		$device = $entry->get_device();
 		$floor = $entry->get_floor();
@@ -65,7 +65,9 @@ require __DIR__ . "/../vendor/autoload.php";
 				<?php } ?>
 				
 				<dt class="col-sm-2">Operating System</dt>
-				<dd class="col-sm-9"><?= $device->get_os()->as_string() ?></dd>
+				<dd class="col-sm-9">
+					<span class="badge" style="background-color: <?= $device->get_os()->get_icon()->get_color() ?>;"><?= $device->get_os()->get_icon()->get_tag(false) ?> <?= $device->get_os()->as_string() ?></span>
+				</dd>
 			</dl>
 
 			<h3>
