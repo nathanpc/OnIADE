@@ -64,8 +64,10 @@ require __DIR__ . "/../vendor/autoload.php";
 					<dd class="col-sm-9"><?= $device->get_model()->get_name() ?></dd>
 				<?php } ?>
 				
-				<dt class="col-sm-2">Operating System</dt>
-				<dd class="col-sm-9"><?= $device->get_os()->as_flair() ?></dd>
+				<?php if (!is_null($device->get_os())) { ?>
+					<dt class="col-sm-2">Operating System</dt>
+					<dd class="col-sm-9"><?= $device->get_os()->as_flair() ?></dd>
+				<?php } ?>
 			</dl>
 
 			<h3>
