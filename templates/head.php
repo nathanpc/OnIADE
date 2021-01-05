@@ -17,6 +17,7 @@
 	<script src="https://kit.fontawesome.com/ae0b599810.js" crossorigin="anonymous"></script>
 
 	<!-- Custom stuff -->
+	<link href="/assets/css/default.css" rel="stylesheet">
 	<script type="text/javascript" src="/assets/js/main.js"></script>
 </head>
 <body>

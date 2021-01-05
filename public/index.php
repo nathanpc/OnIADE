@@ -42,7 +42,11 @@ function get_timespan() {
 
 			<ul class="list-group">
 				<?php foreach (History\Entry::List(get_timespan(), $floor) as $entry) { ?>
-					<li class="list-group-item"><?= $entry->get_device()->get_hostname() ?></li>
+					<li class="list-group-item">
+						<?= $entry->get_device()->get_hostname() ?>
+						<span class="flair-spacer"> </span>
+						<?= implode("\n", $entry->get_device()->get_flairs()) ?>
+					</li>
 				<?php } ?>
 			</ul>
 

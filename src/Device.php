@@ -164,6 +164,25 @@ class Device {
 	}
 
 	/**
+	 * Gets a list of HTML device flairs.
+	 * 
+	 * @return array Array of HTML device flairs.
+	 */
+	public function get_flairs() {
+		$flairs = array();
+
+		// Device type.
+		if (!is_null($this->type))
+			array_push($flairs, $this->type->as_flair());
+
+		// Operating system.
+		if (!is_null($this->os))
+			array_push($flairs, $this->os->as_flair());
+
+		return $flairs;
+	}
+
+	/**
 	 * Gets the device ID.
 	 * 
 	 * @return int Device ID.

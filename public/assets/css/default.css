@@ -1,0 +1,14 @@
+/**
+ * default.css
+ * Our default modifications to Bootstrap.
+ *
+ * @author Nathan Campos <nathan@innoveworkshop.com>
+ */
+
+.list-group-item .flair-spacer {
+	margin-left: 0.7em;
+}
+
+.list-group-item .badge {
+	margin-left: 0.5em;
+}
