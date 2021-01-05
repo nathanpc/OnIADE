@@ -41,6 +41,10 @@ class OperatingSystem {
 	 * @return OperatingSystem          Populated device OS object.
 	 */
 	public static function Create($name = null, $version = null, $family = null) {
+		// Check for a null name.
+		if (is_null($name))
+			return null;
+		
 		$os = new OperatingSystem(null, $name, $version, $family);
 		$os->save();
 
