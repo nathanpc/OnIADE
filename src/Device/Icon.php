@@ -53,7 +53,7 @@ class Icon {
 	 */
 	public function get_color() {
 		if (is_null($this->color))
-			return "#8e8e8e";
+			return "#636464";
 
 		return $this->color;
 	}
