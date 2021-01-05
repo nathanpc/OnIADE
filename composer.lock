@@ -4,8 +4,58 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f46093ea8f5496612c64440db69e654f",
+    "content-hash": "c72635b237e80c9c63719599fd2707e2",
     "packages": [
+        {
+            "name": "palepurple/nmap",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DavidGoodwin/nmap.git",
+                "reference": "0cedf02fc1db0a45e37c71caf6bcf865b6538332"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DavidGoodwin/nmap/zipball/0cedf02fc1db0a45e37c71caf6bcf865b6538332",
+                "reference": "0cedf02fc1db0a45e37c71caf6bcf865b6538332",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">= 7.2",
+                "symfony/process": "~2.0|~3.0|~4.0"
+            },
+            "require-dev": {
+                "jakub-onderka/php-parallel-lint": "*",
+                "mockery/mockery": "*",
+                "phpunit/phpunit": "~7",
+                "vimeo/psalm": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Nmap": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William DURAND",
+                    "email": "william.durand1@gmail.com"
+                },
+                {
+                    "name": "David Goodwin",
+                    "email": "david+nmap-php@codepoets.co.uk"
+                }
+            ],
+            "description": "nmap is a PHP wrapper for Nmap, a free security scanner for network exploration.",
+            "support": {
+                "source": "https://github.com/DavidGoodwin/nmap/tree/master"
+            },
+            "time": "2020-02-26T12:43:19+00:00"
+        },
         {
             "name": "psr/cache",
             "version": "1.0.1",
@@ -56,17 +106,78 @@
             "time": "2016-08-06T20:24:11+00:00"
         },
         {
-            "name": "whichbrowser/parser",
-            "version": "v2.0.42",
+            "name": "symfony/process",
+            "version": "v4.4.18",
             "source": {
                 "type": "git",
-                "url": "https://github.com/WhichBrowser/Parser-PHP.git",
-                "reference": "4899110cd2f87b01e04ced62dbb9dec541031dee"
+                "url": "https://github.com/symfony/process.git",
+                "reference": "075316ff72233ce3d04a9743414292e834f2cb4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WhichBrowser/Parser-PHP/zipball/4899110cd2f87b01e04ced62dbb9dec541031dee",
-                "reference": "4899110cd2f87b01e04ced62dbb9dec541031dee",
+                "url": "https://api.github.com/repos/symfony/process/zipball/075316ff72233ce3d04a9743414292e834f2cb4a",
+                "reference": "075316ff72233ce3d04a9743414292e834f2cb4a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Process Component",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/process/tree/v4.4.18"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-12-08T16:59:59+00:00"
+        },
+        {
+            "name": "whichbrowser/parser",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WhichBrowser/Parser-PHP.git",
+                "reference": "da24adc4f4f26002673d236e69b91a10f2fd594c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/WhichBrowser/Parser-PHP/zipball/da24adc4f4f26002673d236e69b91a10f2fd594c",
+                "reference": "da24adc4f4f26002673d236e69b91a10f2fd594c",
                 "shasum": ""
             },
             "require": {
@@ -74,12 +185,13 @@
                 "psr/cache": "^1.0"
             },
             "require-dev": {
+                "cache/array-adapter": "^1.1",
                 "icomefromthenet/reverse-regex": "0.0.6.3",
-                "phpunit/php-code-coverage": "^2.2 || ^3.0",
-                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0",
-                "satooshi/php-coveralls": "^1.0",
-                "squizlabs/php_codesniffer": "2.5.*",
-                "symfony/yaml": "~2.8 || ~3.4 || ~4.2 || ~5.0"
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/php-code-coverage": "^5.0 || ^7.0",
+                "phpunit/phpunit": "^6.0 || ^8.0",
+                "squizlabs/php_codesniffer": "^3.5",
+                "symfony/yaml": "~3.4 || ~4.0"
             },
             "suggest": {
                 "cache/array-adapter": "Allows testing of the caching functionality"
@@ -114,9 +226,9 @@
             ],
             "support": {
                 "issues": "https://github.com/WhichBrowser/Parser-PHP/issues",
-                "source": "https://github.com/WhichBrowser/Parser-PHP/tree/v2.0.42"
+                "source": "https://github.com/WhichBrowser/Parser-PHP/tree/v2.1.1"
             },
-            "time": "2020-02-12T10:54:23+00:00"
+            "time": "2021-01-04T16:36:15+00:00"
         }
     ],
     "packages-dev": [],

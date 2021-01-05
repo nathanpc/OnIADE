@@ -22,6 +22,9 @@ return (object) array(
 	"host" => (object)array(
 		"ip_addr" => "192.168.1.15",
 		"mac_addr" => "00:90:F5:E3:99:27"
+	),
+	"scanner" => (object)array(
+		"range" => "192.168.1.0/24"
 	)
 );
 

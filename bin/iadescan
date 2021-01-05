@@ -1,0 +1,56 @@
+#!/usr/local/bin/php
+<?php
+/**
+ * iadescan
+ * A simple network scanning utility for the OnIADE project.
+ *
+ * @author Nathan Campos <nathan@innoveworkshop.com>
+ */
+
+namespace OnIADE;
+require __DIR__ . "/../vendor/autoload.php";
+use Nmap\Nmap;
+
+// Open the configuration file.
+$config = require(__DIR__ . "/../config/config.php");
+
+// Setup Nmap.
+$nmap = new Nmap();
+$nmap->disablePortScan();
+
+// Scan the network and go through the available hosts.
+$hosts = $nmap->scan([ $config->scanner->range ]);
+foreach ($hosts as $host) {
+	$ipaddr = null;
+	$macaddr = null;
+	$hostname = null;
+
+	// Ignore hosts that are not UP.
+	if ($host->getState() != "up")
+		continue;
+
+	// Get IP address.
+	$ipaddr = current($host->getIpv4Addresses())->getAddress();
+
+	// Get MAC address.
+	if (!empty($host->getMacAddresses())) {
+		$macaddr = current($host->getMacAddresses())->getAddress();
+	} else {
+		// Nmap can't get our own MAC address.
+		$macaddr = $config->host->mac_addr;
+	}
+
+	// Get hostname.
+	if (!empty($host->getHostnames())) {
+		$hostname = current($host->getHostnames())->getName();
+	} else {
+		$hostname = $ipaddr;
+	}
+
+	print "$ipaddr\n";
+	print "$macaddr\n";
+	print "$hostname\n";
+	print "\n\n";
+}
+
+?>
