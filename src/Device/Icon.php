@@ -26,26 +26,6 @@ class Icon {
 	}
 
 	/**
-	 * Gets the Font Awesome tag for this icon.
-	 * 
-	 * @param  boolean $with_color Should we have the color added?
-	 * @return string              Font Awesome tag with color if asked for.
-	 */
-	public function get_tag($with_color = true) {
-		$html = "";
-
-		if ($with_color)
-			$html .= "<span style=\"color: " . $this->get_color() . "\">";
-
-		$html .= "<i class=\"" . $this->get_name() . "\"></i>";
-
-		if ($with_color)
-			$html .= "</span>";
-
-		return $html;
-	}
-
-	/**
 	 * Gets the icon name.
 	 * 
 	 * @return string Icon name.
@@ -85,6 +65,26 @@ class Icon {
 	 */
 	public function set_color($color) {
 		$this->color = $color;
+	}
+
+	/**
+	 * Gets the Font Awesome tag for this icon.
+	 * 
+	 * @param  boolean $with_color Should we have the color added?
+	 * @return string              Font Awesome tag with color if asked for.
+	 */
+	public function as_tag($with_color = true) {
+		$html = "";
+
+		if ($with_color)
+			$html .= "<span style=\"color: " . $this->get_color() . "\">";
+
+		$html .= "<i class=\"" . $this->get_name() . "\"></i>";
+
+		if ($with_color)
+			$html .= "</span>";
+
+		return $html;
 	}
 
 	/**

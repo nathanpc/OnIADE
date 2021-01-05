@@ -245,6 +245,18 @@ class OperatingSystem {
 	}
 
 	/**
+	 * Gets an HTML flair of the operating system.
+	 * 
+	 * @return string HTML flair with icon, color, and description.
+	 */
+	public function as_flair() {
+		return "<span class=\"badge\" style=\"background-color: " .
+			$this->get_icon()->get_color() . ";\">" .
+			$this->get_icon()->as_tag(false) . " " . $this->as_string() .
+			"</span>";
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.

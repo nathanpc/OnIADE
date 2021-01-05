@@ -52,9 +52,7 @@ require __DIR__ . "/../vendor/autoload.php";
 				<dd class="col-sm-9"><?= $entry->get_ip_addr() ?></dd>
 
 				<dt class="col-sm-2">Type</dt>
-				<dd class="col-sm-9">
-					<span class="badge" style="background-color: <?= $device->get_type()->get_icon()->get_color() ?>;"><?= $device->get_type()->get_icon()->get_tag(false) ?> <?= $device->get_type()->as_string() ?></span>
-				</dd>
+				<dd class="col-sm-9"><?= $device->get_type()->as_flair() ?></dd>
 
 				<?php if (!is_null($device->get_model()->get_manufacturer())) { ?>
 					<dt class="col-sm-2">Manufacturer</dt>
@@ -67,9 +65,7 @@ require __DIR__ . "/../vendor/autoload.php";
 				<?php } ?>
 				
 				<dt class="col-sm-2">Operating System</dt>
-				<dd class="col-sm-9">
-					<span class="badge" style="background-color: <?= $device->get_os()->get_icon()->get_color() ?>;"><?= $device->get_os()->get_icon()->get_tag(false) ?> <?= $device->get_os()->as_string() ?></span>
-				</dd>
+				<dd class="col-sm-9"><?= $device->get_os()->as_flair() ?></dd>
 			</dl>
 
 			<h3>

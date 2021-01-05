@@ -208,6 +208,18 @@ class Type {
 	}
 
 	/**
+	 * Gets an HTML flair of the device type.
+	 * 
+	 * @return string HTML flair with icon, color, and description.
+	 */
+	public function as_flair() {
+		return "<span class=\"badge\" style=\"background-color: " .
+			$this->get_icon()->get_color() . ";\">" .
+			$this->get_icon()->as_tag(false) . " " . $this->as_string() .
+			"</span>";
+	}
+
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return string String representation of this object.
