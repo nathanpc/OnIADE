@@ -50,9 +50,9 @@ class Entry {
 		// Create the query statement.
 		$query = null;
 		if ($floor == null) {
-			$query = $dbh->prepare("SELECT DISTINCT id FROM device_history WHERE dt > NOW() - INTERVAL :ts HOUR ORDER BY dt DESC");
+			$query = $dbh->prepare("SELECT id FROM device_history WHERE dt > NOW() - INTERVAL :ts HOUR GROUP BY (device_id) ORDER BY dt DESC");
 		} else {
-			$query = $dbh->prepare("SELECT DISTINCT id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR ORDER BY dt DESC");
+			$query = $dbh->prepare("SELECT id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR GROUP BY (device_id) ORDER BY dt DESC");
 			$query->bindValue(":floor_id", $floor->get_id());
 		}
 
