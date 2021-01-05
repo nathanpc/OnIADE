@@ -15,6 +15,7 @@ class Type {
 	private $key;
 	private $name;
 	private $subtype;
+	private $icon;
 
 	/**
 	 * Device type object constructor.
@@ -23,13 +24,19 @@ class Type {
 	 * @param string  $key      Device type key.
 	 * @param string  $name     Human-readable device type name.
 	 * @param string  $subtype  Device sub-type.
+	 * @param Icon    $icon     Device type icon.
 	 */
 	public function __construct($id = null, $key = null, $name = null,
-			$subtype = null) {
+			$subtype = null, $icon = null) {
 		$this->id = $id;
 		$this->key = $key;
 		$this->name = $name;
 		$this->subtype = $subtype;
+		$this->icon = $icon;
+
+		// Handle empty icons.
+		if (is_null($this->icon))
+			$this->icon = new Icon();
 	}
 
 	/**
@@ -40,8 +47,9 @@ class Type {
 	 * @param  string  $subtype  Device sub-type.
 	 * @return Type              Populated device type object.
 	 */
-	public static function Create($key, $name = null, $subtype = null) {
-		$type = new Type(null, $key, $name, $subtype);
+	public static function Create($key, $name = null, $subtype = null,
+			$icon = null) {
+		$type = new Type(null, $key, $name, $subtype, $icon);
 		$type->save();
 
 		return $type;
@@ -94,7 +102,7 @@ class Type {
 		// Create a new device type object.
 		$type = $type[0];
 		return new Type($type["id"], $type["identifier"], $type["name"],
-			$type["subtype"]);
+			$type["subtype"], new Icon($type["icon"], $type["icon_color"]));
 	}
 
 	/**
@@ -119,7 +127,7 @@ class Type {
 		// Create a new device type object.
 		$type = $type[0];
 		return new Type($type["id"], $type["identifier"], $type["name"],
-			$type["subtype"]);
+			$type["subtype"], new Icon($type["icon"], $type["icon_color"]));
 	}
 
 	/**
@@ -134,10 +142,10 @@ class Type {
 		// Check if we are creating a new device type or updating one.
 		if (is_null($this->id)) {
 			// Creating a new type.
-			$stmt = $dbh->prepare("INSERT INTO device_types(identifier, name, subtype) VALUES (:key, :name, :subtype)");
+			$stmt = $dbh->prepare("INSERT INTO device_types(identifier, name, subtype, icon, icon_color) VALUES (:key, :name, :subtype, :icon, :icon_color)");
 		} else {
 			// Update an existing type.
-			$stmt = $dbh->prepare("UPDATE device_types SET identifier = :key, name = :name, subtype = :subtype WHERE id = :id");
+			$stmt = $dbh->prepare("UPDATE device_types SET identifier = :key, name = :name, subtype = :subtype, icon = :icon, icon_color = :icon_color WHERE id = :id");
 			$stmt->bindValue(":id", $this->id);
 		}
 
@@ -145,6 +153,8 @@ class Type {
 		$stmt->bindValue(":key", $this->key);
 		$stmt->bindValue(":name", $this->name);
 		$stmt->bindValue(":subtype", $this->subtype);
+		$stmt->bindValue(":icon", $this->icon->get_name());
+		$stmt->bindValue(":icon_color", $this->icon->get_color());
 		$stmt->execute();
 
 		// Set the ID.
@@ -189,6 +199,15 @@ class Type {
 	}
 
 	/**
+	 * Gets the device type icon.
+	 * 
+	 * @return Icon Device type icon.
+	 */
+	public function get_icon() {
+		return $this->icon;
+	}
+
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return string String representation of this object.
@@ -207,7 +226,8 @@ class Type {
 			"id" => $this->id,
 			"key" => $this->key,
 			"name" => $this->name,
-			"subtype" => $this->subtype
+			"subtype" => $this->subtype,
+			"icon" => $this->icon->as_array()
 		);
 	}
 }
