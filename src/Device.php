@@ -17,6 +17,7 @@ class Device {
 	private $type;
 	private $model;
 	private $os;
+	private $ignored;
 
 	/**
 	 * Device class constructor.
@@ -24,15 +25,17 @@ class Device {
 	 * @param int                    $id       Device ID.
 	 * @param string                 $mac_addr MAC address.
 	 * @param string                 $hostname Hostname.
+	 * @param boolean                $ignored  Ignore this device when listing?
 	 * @param Device\Type            $type     Device type.
 	 * @param Device\Model           $model    Device model.
 	 * @param Device\OperatingSystem $os       Device operating system.
 	 */
 	public function __construct($id = null, $mac_addr = null, $hostname = null,
-			$type = null, $model = null, $os = null) {
+			$ignored = false, $type = null, $model = null, $os = null) {
 		$this->id = $id;
 		$this->mac_addr = $mac_addr;
 		$this->hostname = $hostname;
+		$this->ignored = $ignored;
 		$this->type = $type;
 		$this->model = $model;
 		$this->os = $os;
@@ -82,7 +85,7 @@ class Device {
 		// Create a new device object.
 		$dev = $dev[0];
 		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"], 
-			Device\Type::FromID($dev["type_id"]),
+			(bool)$dev["ignored"], Device\Type::FromID($dev["type_id"]),
 			Device\Model::FromID($dev["model_id"]),
 			Device\OperatingSystem::FromID($dev["os_id"]));
 	}
@@ -111,7 +114,7 @@ class Device {
 		// Create a new device object.
 		$dev = $dev[0];
 		return new Device($dev["id"], $dev["mac_addr"], $dev["hostname"], 
-			Device\Type::FromID($dev["type_id"]),
+			(bool)$dev["ignored"], Device\Type::FromID($dev["type_id"]),
 			Device\Model::FromID($dev["model_id"]),
 			Device\OperatingSystem::FromID($dev["os_id"]));
 	}
@@ -128,10 +131,10 @@ class Device {
 		// Check if we are creating a new device or updating one.
 		if (is_null($this->id)) {
 			// Creating a new device.
-			$stmt = $dbh->prepare("INSERT INTO devices(mac_addr, hostname, type_id, model_id, os_id) VALUES (:mac_addr, :hostname, :type_id, :model_id, :os_id)");
+			$stmt = $dbh->prepare("INSERT INTO devices(mac_addr, hostname, type_id, model_id, os_id, ignored) VALUES (:mac_addr, :hostname, :type_id, :model_id, :os_id, :ignored)");
 		} else {
 			// Update an existing device.
-			$stmt = $dbh->prepare("UPDATE devices SET mac_addr = :mac_addr, hostname = :hostname, type_id = :type_id, model_id = :model_id, os_id = :os_id WHERE id = :id");
+			$stmt = $dbh->prepare("UPDATE devices SET mac_addr = :mac_addr, hostname = :hostname, type_id = :type_id, model_id = :model_id, os_id = :os_id, ignored = :ignored WHERE id = :id");
 			$stmt->bindValue(":id", $this->id);
 		}
 
@@ -156,6 +159,7 @@ class Device {
 		$stmt->bindValue(":type_id", $type_id);
 		$stmt->bindValue(":model_id", $model_id);
 		$stmt->bindValue(":os_id", $os_id);
+		$stmt->bindValue(":ignored", (int)$this->ignored);
 		$stmt->execute();
 
 		// Set the device ID.
@@ -216,6 +220,24 @@ class Device {
 	 */
 	public function get_hostname() {
 		return $this->hostname;
+	}
+
+	/**
+	 * Sets the ignored parameter.
+	 * 
+	 * @param boolean $ignored Should we ignore this device when listing?
+	 */
+	public function set_ignored($ignored) {
+		$this->ignored = $ignored;
+	}
+
+	/**
+	 * Checks if this device should be ignored when listing.
+	 * 
+	 * @return boolean Should this device be ignored when listing?
+	 */
+	public function is_ignored() {
+		return $this->ignored;
 	}
 
 	/**
@@ -282,6 +304,7 @@ class Device {
 			"id" => $this->id,
 			"mac_addr" => $this->mac_addr,
 			"hostname" => $this->hostname,
+			"ignored" => (bool)$this->ignored,
 			"type" => null,
 			"model" => null,
 			"os" => null
