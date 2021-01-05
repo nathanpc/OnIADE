@@ -72,8 +72,10 @@ class OperatingSystem {
 	public static function CreateFromBrowserParser($parser, $check_exists = true) {
 		// Get our parameters.
 		$name = $parser->os->name;
-		$version = $parser->os->version->alias;
 		$family = $parser->os->family;
+		$version = null;
+		if (isset($parser->os->version->alias))
+			$version = $parser->os->version->alias;
 
 		// Check if it exists before.
 		if ($check_exists) {
