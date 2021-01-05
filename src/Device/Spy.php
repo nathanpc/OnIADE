@@ -76,7 +76,7 @@ class Spy {
 		// IP address if we are accessing from the host machine.
 		$config = require(__DIR__ . "/../../config/config.php");
 		if ($config->dev->env && ($ip == "127.0.0.1"))
-			$ip = $config->dev->host_ip;
+			$ip = $config->host->ip_addr;
 
 		return $ip;
 	}
