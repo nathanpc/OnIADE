@@ -13,8 +13,13 @@ require __DIR__ . "/../vendor/autoload.php";
 <?php require(__DIR__ . "/../templates/head.php"); ?>
 <?php
 	$entry = $spy->get_history_entry();
-	$device = $entry->get_device();
-	$floor = $entry->get_floor();
+	$device = null;
+	$floor = null;
+	
+	if (!is_null($entry)) {
+		$device = $entry->get_device();
+		$floor = $entry->get_floor();
+	}
 ?>
 
 	<!-- Main Body -->

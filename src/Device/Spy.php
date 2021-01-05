@@ -33,7 +33,7 @@ class Spy {
 
 		// Get request headers.
 		$this->headers = null;
-		if (!$prevent)
+		if (!$prevent && !is_null($this->hist_entry))
 			$this->headers = RequestHeaders::Create(
 				$this->hist_entry->get_device(),
 				getallheaders());
