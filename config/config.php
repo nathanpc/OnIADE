@@ -24,7 +24,8 @@ return (object) array(
 		"mac_addr" => "00:90:F5:E3:99:27"
 	),
 	"scanner" => (object)array(
-		"range" => "192.168.1.0/24"
+		"range" => "192.168.1.0/24",
+		"scan_netbios" => true
 	)
 );
 

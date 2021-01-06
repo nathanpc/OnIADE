@@ -24,6 +24,19 @@ $config = require(__DIR__ . "/../config/config.php");
 function main($argc, $argv) {
 	global $config;
 
+	// Check if we have Nmap installed and in the system PATH.
+	if (!check_nmap()) {
+		print "\033[1;31mERROR:\033[0m Couldn't execute Nmap. This script " .
+			"requires Nmap to be installed and in the system PATH to work.\n\n";
+
+		print "First check if you have Nmap installed. If you do, please add " .
+			"to the system environment variable PATH. If you don't have it " .
+			"installed, please go to \033[1;36mhttps://nmap.org/download.html" .
+			"\033[0m and install it\n";
+
+		exit(1);
+	}
+
 	// Check if we have the required arguments.
 	if ($argc != 1)
 		usage();
@@ -78,13 +91,64 @@ function get_hosts() {
 		if (!empty($nhost->getHostnames())) {
 			$host["name"] = current($nhost->getHostnames())->getName();
 		} else {
-			$host["name"] = $host["ip_addr"];
+			// Should we scan for NetBIOS names?
+			if ($config->scanner->scan_netbios)
+				$host["name"] = get_netbios_name($host["ip_addr"]);
+
+			// Use the IP address as a hostname if we couldn't get any.
+			if (is_null($host["name"]))
+				$host["name"] = $host["ip_addr"];
 		}
 
+		// Push our host into the hosts array.
 		array_push($arr, $host);
 	}
 
 	return $arr;
+}
+
+/**
+ * Scans a particular IP address for its NetBIOS name.
+ * WARNING: Spamming this on a large network will slow things down.
+ * 
+ * @param  string $ip_addr IP address of the host to be searched.
+ * @return string          NetBIOS name or NULL if one wasn't found.
+ */
+function get_netbios_name($ip_addr) {
+	global $config;
+
+	// Execute the Nmap NetBIOS host scan.
+	$process = new Process([ "nmap", "--script", "nbstat", $ip_addr ]);
+	$process->run();
+
+	// Check if the execution was successful.
+	if (!$process->isSuccessful())
+		return null;
+
+	// Try to find the NetBIOS name in the output.
+	preg_match("/\| nbstat: NetBIOS name: ([^,]+), NetBIOS/",
+		$process->getOutput(), $matches, PREG_UNMATCHED_AS_NULL);
+
+	// No NetBIOS name available.
+	if (empty($matches))
+		return null;
+
+	return $matches[1];
+}
+
+/**
+ * Checks if Nmap is present for execution.
+ * 
+ * @return boolean TRUE if Nmap can be executed.
+ */
+function check_nmap() {
+	global $config;
+
+	// Try to run Nmap.
+	$process = new Process([ "nmap", "-h" ]);
+	$process->run();
+
+	return $process->isSuccessful();
 }
 
 /**
@@ -96,6 +160,10 @@ function usage() {
 	print "Usage: $argv[0] [-h]\n\n";
 	print "Arguments:\n";
 	print "    -h\tShows this message.\n";
+
+	// Exit with class if we were asked to.
+	if ($argv[1] == "-h")
+		exit(0);
 
 	exit(1);
 }

@@ -13,7 +13,8 @@
 		"ext-pdo": "^7.4",
 		"ext-pdo_mysql": "^7.4",
 		"whichbrowser/parser": "^2.0",
-		"palepurple/nmap": "^2.0"
+		"palepurple/nmap": "dev-master",
+		"symfony/process": "^5.0"
 	},
 	"autoload": {
 		"psr-4": {
