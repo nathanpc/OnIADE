@@ -15,6 +15,9 @@ use Nmap\Nmap;
 // Configuration global variable.
 $config = require(__DIR__ . "/../config/config.php");
 
+// Disable any execution time limit.
+set_time_limit(0);
+
 /**
  * Script's entry point.
  * 
@@ -23,6 +26,15 @@ $config = require(__DIR__ . "/../config/config.php");
  */
 function main($argc, $argv) {
 	global $config;
+
+	// Check if we have the required arguments.
+	if ($argc > 2)
+		usage();
+
+	//  Check if the user is requesting help.
+	if ($argc > 1)
+		if ($argv[1] == "-h")
+			usage();
 
 	// Check if we have Nmap installed and in the system PATH.
 	if (!check_nmap()) {
@@ -37,15 +49,66 @@ function main($argc, $argv) {
 		exit(1);
 	}
 
-	// Check if we have the required arguments.
-	if ($argc > 2)
-		usage();
-
 	// Print a little message to begin things.
 	print "IADE Network Scanning Script\n\n";
 
-	// Get hosts and go through them.
+	// Are we going to be running this as a daemon?
+	if ($argc > 1) {
+		if ($argv[1] == "-d") {
+			// Check if the interval is valid.
+			$interval = $config->scanner->interval;
+			if ($interval <= 0) {
+				print "\033[1;31mERROR:\033[0m Invalid scan interval " .
+					"\"$interval\". Please choose a number greater than 1 minute.\n";
+				exit(1);
+			}
+
+			// Run daemon.
+			run_daemon($interval);
+		}
+	}
+
+	// Just do a single network scan and quit.
+	scan_network();
+}
+
+/**
+ * Runs the network scan as a daemon.
+ * 
+ * @param int $interval Interval between scans (in minutes).
+ */
+function run_daemon($interval) {
+	print "\033[1;33mNotice:\033[0m Starting network scanner as a daemon that " .
+		"will perform a scan every \033[1;36m$interval\033[0m minutes.\n";
+
+	while (true) {
+		scan_network();
+		print "\nGoing to sleep for $interval minutes... ";
+
+		// Count robot sheep...
+		for ($i = 0; $i < $interval; $i++) {
+			sleep(60);
+			print ($i + 1) . "... ";
+		}
+
+		// Let's start all over again!
+		print_ok();
+		print "\n";
+	}
+}
+
+/**
+ * Performs a network scan and imports the hosts found into the system.
+ */
+function scan_network() {
+	// Print a little message.
+	print "Starting a new network scan...\n";
+
+	// Get hosts.
 	$hosts = get_hosts();
+	print "\n";
+
+	// Import them into the system.
 	foreach ($hosts as $host) {
 		add_device_entry($host);
 	}
@@ -280,13 +343,12 @@ function print_failed($line_break = true) {
 function usage() {
 	global $argv;
 
-	print "Usage: $argv[0] [-d minutes] [-h]\n";
+	print "Usage: $argv[0] [-d] [-h]\n";
 	print "A simple network scanner for the OnIADE project.\n\n";
 
 	print "Arguments:\n";
-	print "    -d <minutes>\tSets the script to run as a daemon scanning the network in\n"
-	print "                \tX minute intervals.\n";
-	print "    -h          \tShows this message.\n\n";
+	print "    -d\tSets the script to run as a daemon scanning the network in intervals.\n";
+	print "    -h\tShows this message.\n\n";
 
 	print "When run without any arguments it'll just do a single network scan.\n\n";
 
