@@ -16,7 +16,7 @@
 function main($argc, $argv) {
 	// Check if we have the required arguments.
 	if ($argc != 2)
-		usage($argv);
+		usage();
 
 	// Load XML file and go through devices.
 	$xml = simplexml_load_file($argv[1]);
@@ -94,7 +94,9 @@ function post($url, $data) {
 /**
  * Teaches the user how to use the script.
  */
-function usage($argv) {
+function usage() {
+	global $argv;
+	
 	print "Usage: $argv[0] <xmlfile>\n\n";
 	print "Arguments:\n";
 	print "    xmlfile\tAdvanced IP Scanner exported XML file.\n";
