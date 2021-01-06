@@ -41,14 +41,17 @@ function main($argc, $argv) {
 	if ($argc != 1)
 		usage();
 
+	// Print a little message to begin things.
+	print "IADE Network Scanning Script\n\n";
+
 	// Get hosts and go through them.
 	$hosts = get_hosts();
-	foreach ($hosts as $host) {
+	/*foreach ($hosts as $host) {
 		print $host["ip_addr"] . "\n";
 		print $host["mac_addr"] . "\n";
 		print $host["name"] . "\n";
 		print "\n\n";
-	}
+	}*/
 }
 
 /**
@@ -62,11 +65,18 @@ function get_hosts() {
 	$arr = array();
 
 	// Setup Nmap.
+	print "Setting up Nmap for host scanning... ";
 	$nmap = new Nmap();
 	$nmap->disablePortScan();
+	print_ok();
 
-	// Scan the network and go through the available hosts.
+	// Scan the network.
+	print "Performing network scan... ";
 	$hosts = $nmap->scan([ $config->scanner->range ]);
+	print_ok();
+	print "\n";
+
+	// Go through the available hosts.
 	foreach ($hosts as $nhost) {
 		// Ignore hosts that are not UP.
 		if ($nhost->getState() != "up")
@@ -78,32 +88,71 @@ function get_hosts() {
 			"mac_addr" => null,
 			"name" => null
 		);
+		print "Found a new host: \033[1;36m" . $host["ip_addr"] . "\033[0m\n";
 
 		// Get MAC address.
+		print "Getting MAC address... ";
 		if (!empty($nhost->getMacAddresses())) {
 			$host["mac_addr"] = current($nhost->getMacAddresses())->getAddress();
+			print "\033[1;36m" . $host["mac_addr"] . "\033[0m ";
+			print_ok();
 		} else {
-			// Nmap can't get our own MAC address.
-			$host["mac_addr"] = $config->host->mac_addr;
+			// Check if it's our own IP address, if so it's OK.
+			if ($host["ip_addr"] == $config->host->ip_addr)
+				$host["mac_addr"] = $config->host->mac_addr;
+
+			// Check if everything failed and give up on this one.
+			if (is_null($host["mac_addr"])) {
+				print_failed();
+				print "Something is wrong with this host. \033[1;31mGiving up" .
+					"\033[0m.\n";
+				continue;
+			}
+
+			// Print MAC address found.
+			print "\033[1;36m" . $host["mac_addr"] . "\033[0m ";
+			print_ok();
 		}
 
 		// Get hostname.
+		print "Getting hostname... ";
 		if (!empty($nhost->getHostnames())) {
 			$host["name"] = current($nhost->getHostnames())->getName();
+			print "\033[1;36m" . $host["name"] . "\033[0m ";
+			print_ok();
 		} else {
+			print_failed();
+
 			// Should we scan for NetBIOS names?
-			if ($config->scanner->scan_netbios)
+			if ($config->scanner->scan_netbios) {
+				print "Trying to get NetBIOS name... ";
 				$host["name"] = get_netbios_name($host["ip_addr"]);
 
+				if (is_null($host["name"])) {
+					print_failed();
+				} else {
+					print "\033[1;36m" . $host["name"] . "\033[0m ";
+					print_ok();
+				}
+			}
+
 			// Use the IP address as a hostname if we couldn't get any.
-			if (is_null($host["name"]))
+			if (is_null($host["name"])) {
 				$host["name"] = $host["ip_addr"];
+				print "Using IP address as hostname... \033[1;36m" .
+					$host["name"] . "\033[0m ";
+				print_ok();
+			}
 		}
 
 		// Push our host into the hosts array.
+		print "Adding device to host upload queue... ";
 		array_push($arr, $host);
+		print_ok();
+		print "\n";
 	}
 
+	print "Finished scanning for devices!\n";
 	return $arr;
 }
 
@@ -149,6 +198,28 @@ function check_nmap() {
 	$process->run();
 
 	return $process->isSuccessful();
+}
+
+/**
+ * Prints a green OK message.
+ * 
+ * @param  boolean $line_break Automatically add a line break at the end?
+ */
+function print_ok($line_break = true) {
+	print "\033[1;32mOK\033[0m";
+	if ($line_break)
+		print "\n";
+}
+
+/**
+ * Prints a red FAILED message.
+ * 
+ * @param  boolean $line_break Automatically add a line break at the end?
+ */
+function print_failed($line_break = true) {
+	print "\033[1;31mFAILED\033[0m";
+	if ($line_break)
+		print "\n";
 }
 
 /**
