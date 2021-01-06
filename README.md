@@ -88,6 +88,18 @@ If that went well you're now ready to go! Fire up your browser and check out the
 web application!
 
 
+## Requirements
+
+Even though this is quite a simple project, because of its nature there are
+quite a few dependencies:
+
+  - [Apache](https://httpd.apache.org/) ^2.4
+  - [PHP](https://www.php.net/downloads.php#v7.4.13) ^7.4
+  - [MySQL](https://dev.mysql.com/downloads/) ^8.0
+  - [Nmap](https://nmap.org/download.html) ^7.90
+  - [Composer](https://getcomposer.org/download/) ^2.0
+
+
 ## License
 
 This project is licensed under the **MIT License**.
