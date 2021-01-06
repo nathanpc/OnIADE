@@ -38,7 +38,7 @@ function main($argc, $argv) {
 	}
 
 	// Check if we have the required arguments.
-	if ($argc != 1)
+	if ($argc > 2)
 		usage();
 
 	// Print a little message to begin things.
@@ -280,9 +280,17 @@ function print_failed($line_break = true) {
 function usage() {
 	global $argv;
 
-	print "Usage: $argv[0] [-h]\n\n";
+	print "Usage: $argv[0] [-d minutes] [-h]\n";
+	print "A simple network scanner for the OnIADE project.\n\n";
+
 	print "Arguments:\n";
-	print "    -h\tShows this message.\n";
+	print "    -d <minutes>\tSets the script to run as a daemon scanning the network in\n"
+	print "                \tX minute intervals.\n";
+	print "    -h          \tShows this message.\n\n";
+
+	print "When run without any arguments it'll just do a single network scan.\n\n";
+
+	print "Developed by Nathan Campos <nathan@innoveworkshop.com>\n";
 
 	// Exit with class if we were asked to.
 	if ($argv[1] == "-h")
