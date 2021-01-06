@@ -9,48 +9,96 @@
 
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
+use Symfony\Component\Process\Process;
 use Nmap\Nmap;
 
-// Open the configuration file.
+// Configuration global variable.
 $config = require(__DIR__ . "/../config/config.php");
 
-// Setup Nmap.
-$nmap = new Nmap();
-$nmap->disablePortScan();
+/**
+ * Script's entry point.
+ * 
+ * @param int   $argc Number of arguments supplied to the script.
+ * @param array $argv Array of strings with script arguments.
+ */
+function main($argc, $argv) {
+	global $config;
 
-// Scan the network and go through the available hosts.
-$hosts = $nmap->scan([ $config->scanner->range ]);
-foreach ($hosts as $host) {
-	$ipaddr = null;
-	$macaddr = null;
-	$hostname = null;
+	// Check if we have the required arguments.
+	if ($argc != 1)
+		usage();
 
-	// Ignore hosts that are not UP.
-	if ($host->getState() != "up")
-		continue;
-
-	// Get IP address.
-	$ipaddr = current($host->getIpv4Addresses())->getAddress();
-
-	// Get MAC address.
-	if (!empty($host->getMacAddresses())) {
-		$macaddr = current($host->getMacAddresses())->getAddress();
-	} else {
-		// Nmap can't get our own MAC address.
-		$macaddr = $config->host->mac_addr;
+	// Get hosts and go through them.
+	$hosts = get_hosts();
+	foreach ($hosts as $host) {
+		print $host["ip_addr"] . "\n";
+		print $host["mac_addr"] . "\n";
+		print $host["name"] . "\n";
+		print "\n\n";
 	}
-
-	// Get hostname.
-	if (!empty($host->getHostnames())) {
-		$hostname = current($host->getHostnames())->getName();
-	} else {
-		$hostname = $ipaddr;
-	}
-
-	print "$ipaddr\n";
-	print "$macaddr\n";
-	print "$hostname\n";
-	print "\n\n";
 }
 
+/**
+ * Gets the hosts on the network and returns them in an easy to use and
+ * comprehensible array.
+ * 
+ * @return array Array of hosts.
+ */
+function get_hosts() {
+	global $config;
+	$arr = array();
+
+	// Setup Nmap.
+	$nmap = new Nmap();
+	$nmap->disablePortScan();
+
+	// Scan the network and go through the available hosts.
+	$hosts = $nmap->scan([ $config->scanner->range ]);
+	foreach ($hosts as $nhost) {
+		// Ignore hosts that are not UP.
+		if ($nhost->getState() != "up")
+			continue;
+
+		// Create the array and get IP address.
+		$host = array(
+			"ip_addr" => current($nhost->getIpv4Addresses())->getAddress(),
+			"mac_addr" => null,
+			"name" => null
+		);
+
+		// Get MAC address.
+		if (!empty($nhost->getMacAddresses())) {
+			$host["mac_addr"] = current($nhost->getMacAddresses())->getAddress();
+		} else {
+			// Nmap can't get our own MAC address.
+			$host["mac_addr"] = $config->host->mac_addr;
+		}
+
+		// Get hostname.
+		if (!empty($nhost->getHostnames())) {
+			$host["name"] = current($nhost->getHostnames())->getName();
+		} else {
+			$host["name"] = $host["ip_addr"];
+		}
+
+		array_push($arr, $host);
+	}
+
+	return $arr;
+}
+
+/**
+ * Teaches the user how to use the script.
+ */
+function usage() {
+	global $argv;
+
+	print "Usage: $argv[0] [-h]\n\n";
+	print "Arguments:\n";
+	print "    -h\tShows this message.\n";
+
+	exit(1);
+}
+
+main($argc, $argv);
 ?>
