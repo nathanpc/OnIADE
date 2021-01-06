@@ -46,12 +46,9 @@ function main($argc, $argv) {
 
 	// Get hosts and go through them.
 	$hosts = get_hosts();
-	/*foreach ($hosts as $host) {
-		print $host["ip_addr"] . "\n";
-		print $host["mac_addr"] . "\n";
-		print $host["name"] . "\n";
-		print "\n\n";
-	}*/
+	foreach ($hosts as $host) {
+		add_device_entry($host);
+	}
 }
 
 /**
@@ -86,7 +83,8 @@ function get_hosts() {
 		$host = array(
 			"ip_addr" => current($nhost->getIpv4Addresses())->getAddress(),
 			"mac_addr" => null,
-			"name" => null
+			"name" => null,
+			"floor" => null
 		);
 		print "Found a new host: \033[1;36m" . $host["ip_addr"] . "\033[0m\n";
 
@@ -145,6 +143,19 @@ function get_hosts() {
 			}
 		}
 
+		// Get floor.
+		print "Trying to determine floor number... ";
+		if ($config->dev->env) {
+			// Just generate one for testing purposes.
+			$host["floor"] = mt_rand($config->dev->min_floor,
+				$config->dev->max_floor);
+			print "\033[1;36m" . $host["floor"] . "\033[0m ";
+			print_ok();
+		} else {
+			// Try to guess which floor the device is in.
+			print_failed();
+		}
+
 		// Push our host into the hosts array.
 		print "Adding device to host upload queue... ";
 		array_push($arr, $host);
@@ -183,6 +194,47 @@ function get_netbios_name($ip_addr) {
 		return null;
 
 	return $matches[1];
+}
+
+/**
+ * Adds a device entry to the history and also adds the device to the database
+ * if it doesn't exist.
+ * 
+ * @param array $host Host associative array to be imported into the system.
+ */
+function add_device_entry($host) {
+	$device = null;
+	$floor = null;
+
+	print "Importing \033[1;36m" . $host["name"] . "\033[0m (" .
+		$host["ip_addr"] . ")... ";
+	
+	// Check if the device isn't already in the database.
+	$device = Device::FromMACAddress($host["mac_addr"]);
+	if (is_null($device)) {
+		// Looks like we have a new one. Add it to the list first.
+		$device = new Device(null, $host["mac_addr"]);
+		$device->save();
+	}
+
+	// Set hostname to device if available.
+	if (!is_null($host["name"])) {
+		$device->set_hostname($host["name"]);
+		$device->save();
+	}
+
+	// Check if the floor exists.
+	$floor = Floor::FromNumber($host["floor"]);
+	if (is_null($floor)) {
+		print_failed();
+		print "Invalid floor number \"" . $host["floor"] . "\". \033[1;31m" .
+			"Giving up\033[0m.\n";
+		return;
+	}
+
+	// Create a new device entry.
+	$entry = History\Entry::Create($device, $floor, $host["ip_addr"]);
+	print_ok();
 }
 
 /**
