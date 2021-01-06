@@ -8,7 +8,7 @@
  */
 
 /**
- * Script"s entry point.
+ * Script's entry point.
  * 
  * @param int   $argc Number of arguments supplied to the script.
  * @param array $argv Array of strings with script arguments.
