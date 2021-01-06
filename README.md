@@ -70,6 +70,20 @@ it's just a matter of running:
 composer install
 ```
 
+After the packages finish installing make sure you edit your `config/config.php`
+file with the appropriate parameters regarding your database setup and any other
+options you might want to edit. After that is all done you can start by running
+your first network scan:
+
+```bash
+# To run a single network scan:
+php ./bin/iadescan
+
+# To leave a little daemon scanning the network every 30 minutes:
+# Note: The interval can be changed in the settings.
+php ./bin/iadescan -d
+```
+
 If that went well you're now ready to go! Fire up your browser and check out the
 web application!
 
