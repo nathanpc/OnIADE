@@ -10,6 +10,7 @@
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
 use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Nmap\Nmap;
 
 // Configuration global variable.
@@ -235,28 +236,36 @@ function get_hosts() {
  * WARNING: Spamming this on a large network will slow things down.
  * 
  * @param  string $ip_addr IP address of the host to be searched.
+ * @param  int    $timeout Timeout for this process to run (in seconds).
  * @return string          NetBIOS name or NULL if one wasn't found.
  */
-function get_netbios_name($ip_addr) {
+function get_netbios_name($ip_addr, $timeout = 15) {
 	global $config;
 
 	// Execute the Nmap NetBIOS host scan.
 	$process = new Process([ "nmap", "--script", "nbstat", $ip_addr ]);
-	$process->run();
+	$process->setTimeout($timeout);
 
-	// Check if the execution was successful.
-	if (!$process->isSuccessful())
+	try {
+		// Run Nmap.
+		$process->run();
+
+		// Check if the execution was successful.
+		if (!$process->isSuccessful())
+			return null;
+
+		// Try to find the NetBIOS name in the output.
+		preg_match("/\| nbstat: NetBIOS name: ([^,]+), NetBIOS/",
+			$process->getOutput(), $matches, PREG_UNMATCHED_AS_NULL);
+
+		// No NetBIOS name available.
+		if (empty($matches))
+			return null;
+
+		return $matches[1];
+	} catch (ProcessTimedOutException $e) {
 		return null;
-
-	// Try to find the NetBIOS name in the output.
-	preg_match("/\| nbstat: NetBIOS name: ([^,]+), NetBIOS/",
-		$process->getOutput(), $matches, PREG_UNMATCHED_AS_NULL);
-
-	// No NetBIOS name available.
-	if (empty($matches))
-		return null;
-
-	return $matches[1];
+	}
 }
 
 /**
