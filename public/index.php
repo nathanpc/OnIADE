@@ -35,13 +35,15 @@ function get_timespan() {
 
 		<!-- Floors -->
 		<?php foreach (Floor::List() as $floor) { ?>
+			<?php $entries = History\Entry::List(get_timespan(), $floor) ?>
+
 			<h3>
-				<?= $floor->get_number() ?>
+				<?= count($entries) ?>
 				<small class="text-muted"><?= $floor->get_name() ?></small>
 			</h3>
 
 			<ul class="list-group">
-				<?php foreach (History\Entry::List(get_timespan(), $floor) as $entry) { ?>
+				<?php foreach ($entries as $entry) { ?>
 					<?php if (!$entry->get_device()->is_ignored()) { ?>
 						<li class="list-group-item">
 							<?= $entry->get_device()->get_hostname() ?>
