@@ -17,19 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
 	// Check if we just want a device list.
 	if (!isset($_GET["id"]) && !isset($_GET["macaddr"])) {
-		if (isset($_GET["ts"])) {
-			// We want a device history.
-			$floor = null;
-			if (isset($_GET["floor"]))
-				$floor = Floor::FromNumber($_GET["floor"]);
-
-			// List device history.
-			get_history($_GET["ts"], $floor);
-		} else {
-			// Just list the devices in the database.
-			list_devices();
-		}
-
+		// Just list the devices in the database.
+		list_devices();
 		return;
 	}
 
@@ -52,10 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 /**
  * Gets a history of the devices in a specific timespan and floor.
  * 
- * @param int   $timespan Timespan in hours.
- * @param Floor $floor    Floor to filter devices by.
+ * @param Floor $floor Floor to filter devices by.
  */
-function get_history($timespan, $floor = null) {
+function get_history($floor = null) {
 	// Build the base response.
 	http_response_code(200);
 	$response = array(
@@ -68,7 +56,7 @@ function get_history($timespan, $floor = null) {
 	);
 
 	// Go through devices adding them as arrays to the response.
-	foreach (History\Entry::List($timespan, $floor) as $entry) {
+	foreach (History\Entry::List($floor) as $entry) {
 		array_push($response["list"], $entry->as_array());
 	}
 

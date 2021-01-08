@@ -10,6 +10,7 @@ namespace OnIADE\History;
 require __DIR__ . "/../../vendor/autoload.php";
 use PDO;
 use DateTime;
+use DateInterval;
 
 class Entry {
 	private $id;
@@ -36,28 +37,31 @@ class Entry {
 	}
 
 	/**
-	 * Gets a list of devices that were in the network within a specific 
-	 * timespan and on a specific floor.
+	 * Gets a list of devices that were in the network on a specific floor.
 	 * 
-	 * @param  int   $timespan Timespan in hours.
-	 * @param  Floor $floor    Want to filter by floor?
-	 * @return array           Array of Entry objects found.
+	 * @param  Floor $floor Want to filter by floor?
+	 * @return array        Array of Entry objects found.
 	 */
-	public static function List($timespan = 1, $floor = null) {
+	public static function List($floor = null) {
 		$devices = array();
 		$dbh = \OnIADE\Database::connect();
+		$last = Entry::LastEntry();
+
+		// Create timespan before last entry to fetch devices.
+		$config = require(__DIR__ . "/../../config/config.php");
+		$dt = $last->get_mysql_timestamp($config->scanner->interval / 2);
 
 		// Create the query statement.
 		$query = null;
 		if ($floor == null) {
-			$query = $dbh->prepare("SELECT id FROM device_history WHERE dt > NOW() - INTERVAL :ts HOUR GROUP BY (device_id) ORDER BY dt DESC");
+			$query = $dbh->prepare("SELECT id FROM device_history WHERE dt > :dt GROUP BY (device_id) ORDER BY dt DESC");
 		} else {
-			$query = $dbh->prepare("SELECT id FROM device_history WHERE floor_id = :floor_id AND dt > NOW() - INTERVAL :ts HOUR GROUP BY (device_id) ORDER BY dt DESC");
+			$query = $dbh->prepare("SELECT id FROM device_history WHERE floor_id = :floor_id AND dt > :dt GROUP BY (device_id) ORDER BY dt DESC");
 			$query->bindValue(":floor_id", $floor->get_id());
 		}
 
 		// Bind common values and fetch devices.
-		$query->bindValue(":ts", $timespan);
+		$query->bindValue(":dt", $dt);
 		$query->execute();
 		$entries = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -125,7 +129,7 @@ class Entry {
 	public static function FromIPAddress($ip_addr, $hr_last_seen = 1) {
 		// Get last entry to base our Last Seen time frame.
 		$last_entry = Entry::LastEntry();
-		$last_dt = $last_entry->get_timestamp()->format("Y-m-d H:i:s");
+		$last_dt = $last_entry->get_mysql_timestamp();
 
 		// Get entry from database.
 		$dbh = \OnIADE\Database::connect();
@@ -200,7 +204,7 @@ class Entry {
 		$stmt->bindValue(":device_id", $this->device->get_id());
 		$stmt->bindValue(":floor_id", $this->floor->get_id());
 		$stmt->bindValue(":ip_addr", $this->ip_addr);
-		$stmt->bindValue(":dt", $this->datetime->format("Y-m-d H:i:s"));
+		$stmt->bindValue(":dt", $this->get_mysql_timestamp());
 		$stmt->execute();
 
 		// Set the entry ID.
@@ -284,6 +288,22 @@ class Entry {
 	 */
 	public function get_timestamp() {
 		return $this->datetime;
+	}
+
+	/**
+	 * Gets a timestamp that is in the correct format for using in a MySQL
+	 * database.
+	 * 
+	 * @param  int    $subtract Amount of minutes to subtract from the current
+	 *                          timestamp before returning it.
+	 * @return string           Date and time in MySQL format.
+	 */
+	public function get_mysql_timestamp($subtract = null) {
+		$dt = $this->datetime;
+		if (!is_null($subtract))
+			$dt->sub(new DateInterval("PT" . $subtract . "M"));
+
+		return $dt->format("Y-m-d H:i:s");
 	}
 
 	/**
