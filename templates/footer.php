@@ -4,7 +4,7 @@
 		<div class="container">
 			<div class="row">
 				<div class="col">
-					OnIADE &#169; 2020-<?= date("Y") ?> <a href="https://innoveworkshop.com/">Innove Workshop</a>
+					<?= $config->app->name ?> &#169; 2020-<?= date("Y") ?> <a href="https://innoveworkshop.com/">Innove Workshop</a>
 				</div>
 
 				<div class="col" style="text-align: right;">
