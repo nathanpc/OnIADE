@@ -8,6 +8,9 @@
 
 namespace OnIADE\History;
 require __DIR__ . "/../../vendor/autoload.php";
+use OnIADE\Database;
+use OnIADE\Device;
+use OnIADE\Floor;
 use PDO;
 use DateTime;
 use DateInterval;
@@ -44,7 +47,7 @@ class Entry {
 	 */
 	public static function List($floor = null) {
 		$devices = array();
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$last = Entry::LastEntry();
 
 		// Create timespan before last entry to fetch devices.
@@ -97,7 +100,7 @@ class Entry {
 	 */
 	public static function FromID($id) {
 		// Get entry from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_history WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -109,8 +112,8 @@ class Entry {
 
 		// Get "support" objects.
 		$entry = $entry[0];
-		$device = \OnIADE\Device::FromID($entry["device_id"]);
-		$floor = \OnIADE\Floor::FromID($entry["floor_id"]);
+		$device = Device::FromID($entry["device_id"]);
+		$floor = Floor::FromID($entry["floor_id"]);
 
 		// Build our entry object.
 		return new Entry($entry["id"], $device, $floor,
@@ -132,7 +135,7 @@ class Entry {
 		$last_dt = $last_entry->get_mysql_timestamp();
 
 		// Get entry from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_history WHERE ip_addr = :ip_addr AND dt > :dt - INTERVAL :ts HOUR ORDER BY dt DESC LIMIT 1");
 		$query->bindValue(":ip_addr", $ip_addr);
 		$query->bindValue(":dt", $last_dt);
@@ -146,8 +149,8 @@ class Entry {
 
 		// Get "support" objects.
 		$entry = $entry[0];
-		$device = \OnIADE\Device::FromID($entry["device_id"]);
-		$floor = \OnIADE\Floor::FromID($entry["floor_id"]);
+		$device = Device::FromID($entry["device_id"]);
+		$floor = Floor::FromID($entry["floor_id"]);
 
 		// Build our entry object.
 		return new Entry($entry["id"], $device, $floor,
@@ -162,7 +165,7 @@ class Entry {
 	 */
 	public static function LastEntry() {
 		// Get entry from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_history ORDER BY id DESC LIMIT 1");
 		$query->execute();
 		$entry = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -173,8 +176,8 @@ class Entry {
 
 		// Get "support" objects.
 		$entry = $entry[0];
-		$device = \OnIADE\Device::FromID($entry["device_id"]);
-		$floor = \OnIADE\Floor::FromID($entry["floor_id"]);
+		$device = Device::FromID($entry["device_id"]);
+		$floor = Floor::FromID($entry["floor_id"]);
 
 		// Build our entry object.
 		return new Entry($entry["id"], $device, $floor, $entry["ip_addr"],
@@ -187,7 +190,7 @@ class Entry {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new entry or updating one.

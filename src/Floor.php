@@ -37,7 +37,7 @@ class Floor {
 		$floors = array();
 
 		// Get floors from the database ordered.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT id FROM floors ORDER BY number ASC");
 		$query->execute();
 		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -59,7 +59,7 @@ class Floor {
 	 */
 	public static function FromID($id) {
 		// Get floor from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM floors WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -84,7 +84,7 @@ class Floor {
 	 */
 	public static function FromNumber($number) {
 		// Get device from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM floors WHERE number = :number LIMIT 1");
 		$query->bindValue(":number", $number);
 		$query->execute();

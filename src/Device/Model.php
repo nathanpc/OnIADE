@@ -8,6 +8,7 @@
 
 namespace OnIADE\Device;
 require __DIR__ . "/../../vendor/autoload.php";
+use OnIADE\Database;
 use PDO;
 
 class Model {
@@ -89,7 +90,7 @@ class Model {
 	 */
 	public static function FromID($id) {
 		// Get device model from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_models WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -116,7 +117,7 @@ class Model {
 	 */
 	public static function FromDetails($manufacturer, $name, $type) {
 		// Build database query statement.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_models WHERE (manufacturer <=> :manufacturer) AND (name <=> :name) AND (type_id <=> :type_id) LIMIT 1");
 
 		// Get type ID.
@@ -160,7 +161,7 @@ class Model {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new device model or updating one.

@@ -41,7 +41,7 @@ class Database {
 	 */
 	public static function get_html_table($name) {
 		$html = "<table class='table table-striped table-hover'>";
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 
 		// Get table columns.
 		$query = $dbh->prepare("DESCRIBE $name");

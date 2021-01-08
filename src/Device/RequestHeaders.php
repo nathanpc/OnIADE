@@ -8,6 +8,7 @@
 
 namespace OnIADE\Device;
 require __DIR__ . "/../../vendor/autoload.php";
+use OnIADE\Database;
 use PDO;
 
 class RequestHeaders {
@@ -89,7 +90,7 @@ class RequestHeaders {
 	 */
 	public static function FromID($id) {
 		// Get device request headers from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM request_headers WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -114,7 +115,7 @@ class RequestHeaders {
 	 */
 	public static function FromDevice($device) {
 		// Get device request headers from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM request_headers WHERE device_id = :device_id LIMIT 1");
 		$query->bindValue(":device_id", $device->get_id());
 		$query->execute();
@@ -136,7 +137,7 @@ class RequestHeaders {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new device request headers or updating one.

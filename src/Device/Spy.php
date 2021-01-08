@@ -8,6 +8,7 @@
 
 namespace OnIADE\Device;
 require __DIR__ . "/../../vendor/autoload.php";
+use OnIADE\History;
 
 class Spy {
 	private $ip;
@@ -29,7 +30,7 @@ class Spy {
 		// Get history entry.
 		$this->hist_entry = null;
 		if (!$prevent)
-			$this->hist_entry = \OnIADE\History\Entry::FromIPAddress($this->ip);
+			$this->hist_entry = History\Entry::FromIPAddress($this->ip);
 
 		// Get request headers.
 		$this->headers = null;

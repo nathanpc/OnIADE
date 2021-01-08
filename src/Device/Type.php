@@ -8,6 +8,7 @@
 
 namespace OnIADE\Device;
 require __DIR__ . "/../../vendor/autoload.php";
+use OnIADE\Database;
 use PDO;
 
 class Type {
@@ -89,7 +90,7 @@ class Type {
 	 */
 	public static function FromID($id) {
 		// Get device type from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_types WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -114,7 +115,7 @@ class Type {
 	 */
 	public static function FromKey($key) {
 		// Get device type from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM device_types WHERE identifier = :key LIMIT 1");
 		$query->bindValue(":key", $key);
 		$query->execute();
@@ -136,7 +137,7 @@ class Type {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new device type or updating one.

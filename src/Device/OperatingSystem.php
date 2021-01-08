@@ -8,6 +8,7 @@
 
 namespace OnIADE\Device;
 require __DIR__ . "/../../vendor/autoload.php";
+use OnIADE\Database;
 use PDO;
 
 class OperatingSystem {
@@ -97,7 +98,7 @@ class OperatingSystem {
 	 */
 	public static function FromID($id) {
 		// Get device OS from database.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM operating_systems WHERE id = :id LIMIT 1");
 		$query->bindValue(":id", $id);
 		$query->execute();
@@ -125,7 +126,7 @@ class OperatingSystem {
 	 */
 	public static function FromDetails($name, $version, $family) {
 		// Build database query statement.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$query = $dbh->prepare("SELECT * FROM operating_systems WHERE (name <=> :name) AND (version <=> :version) AND (family <=> :family) LIMIT 1");
 
 		// Bind parameters and execute.
@@ -164,7 +165,7 @@ class OperatingSystem {
 	 */
 	public function save() {
 		// Get database handle.
-		$dbh = \OnIADE\Database::connect();
+		$dbh = Database::connect();
 		$stmt = null;
 
 		// Check if we are creating a new device model or updating one.
