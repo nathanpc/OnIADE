@@ -12,14 +12,14 @@
 					<a class="nav-link active" aria-current="page" href="/">Home</a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link" href="/stats.php">Statistics</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link" href="/mydevice.php">My Device</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/debugview.php">Debug</a>
 				</li>
-				<!--<li class="nav-item">
-					<a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-				</li>-->
 			</ul>
 		</div>
 	</div>
