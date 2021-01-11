@@ -11,6 +11,7 @@
  */
 function Statistics() {
 	this.base_url = "/api/v1/stats.php";
+	this.animationDuration = 500;
 }
 
 /**
@@ -134,6 +135,8 @@ Statistics.prototype.graphFloorOccupancy = function (floors) {
 			datasets: datasets
 		},
 		options: {
+			responsiveAnimationDuration: this.animationDuration,
+			maintainAspectRatio: false,
 			scales: {
 				yAxes: [
 					{
@@ -145,6 +148,7 @@ Statistics.prototype.graphFloorOccupancy = function (floors) {
 			}
 		}
 	});
+	chart.canvas.parentNode.style.height = "400px";
 }
 
 /**
