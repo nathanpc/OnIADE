@@ -13,6 +13,7 @@ use OnIADE\Database;
 use PDO;
 
 class Statistics {
+	private $floors;
 	private $devices;
 	private $types;
 	private $models;
@@ -24,11 +25,21 @@ class Statistics {
 	 * needed from the database.
 	 */
 	public function __construct() {
+		$this->floors = Floor::List();
 		$this->devices = Device::List();
 		$this->types = Device\Type::List();
 		$this->models = Device\Model::List();
 		$this->oses = Device\OperatingSystem::List();
 		$this->last_entries = History\Entry::List();
+	}
+
+	/**
+	 * Gets a list of floors.
+	 * 
+	 * @return array Array of {@link Floor} objects.
+	 */
+	public function get_floors() {
+		return $this->floors;
 	}
 
 	/**
@@ -83,6 +94,7 @@ class Statistics {
 	 */
 	public function as_array() {
 		$arr = array(
+			"floors" => array(),
 			"devices" => array(),
 			"types" => array(),
 			"models" => array(),
