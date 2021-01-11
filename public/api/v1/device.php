@@ -10,32 +10,38 @@
 namespace OnIADE;
 require __DIR__ . "/../../../vendor/autoload.php";
 
-header("Content-Type: application/json");
-check_required_params();
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-	$device = null;
+/**
+ * Main entry point.
+ */
+function main() {
+	header("Content-Type: application/json");
+	check_required_params();
+	
+	if ($_SERVER["REQUEST_METHOD"] == "GET") {
+		$device = null;
 
-	// Check if we just want a device list.
-	if (!isset($_GET["id"]) && !isset($_GET["macaddr"])) {
-		// Just list the devices in the database.
-		list_devices();
-		return;
+		// Check if we just want a device list.
+		if (!isset($_GET["id"]) && !isset($_GET["macaddr"])) {
+			// Just list the devices in the database.
+			list_devices();
+			return;
+		}
+
+		// User wants information about a device.
+		check_required_params("get_device");
+		if (isset($_GET["id"])) {
+			$device = Device::FromID($_GET["id"]);
+		} else if (isset($_GET["macaddr"])) {
+			$device = Device::FromMACAddress($_GET["macaddr"]);
+		}
+
+		// Send device information.
+		get_device($device);
+	} else if ($_SERVER["REQUEST_METHOD"] == "POST") {
+		// Edge device wants to add a device found in the network to the history.
+		check_required_params("add_device_entry");
+		add_device_entry();
 	}
-
-	// User wants information about a device.
-	check_required_params("get_device");
-	if (isset($_GET["id"])) {
-		$device = Device::FromID($_GET["id"]);
-	} else if (isset($_GET["macaddr"])) {
-		$device = Device::FromMACAddress($_GET["macaddr"]);
-	}
-
-	// Send device information.
-	get_device($device);
-} else if ($_SERVER["REQUEST_METHOD"] == "POST") {
-	// Edge device wants to add a device found in the network to the history.
-	check_required_params("add_device_entry");
-	add_device_entry();
 }
 
 /**
@@ -229,4 +235,5 @@ function check_required_params($stage = null) {
 	}
 }
 
+main();
 ?>

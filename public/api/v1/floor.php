@@ -9,27 +9,33 @@
 namespace OnIADE;
 require __DIR__ . "/../../../vendor/autoload.php";
 
-header("Content-Type: application/json");
-check_required_params();
-if ($_SERVER["REQUEST_METHOD"] == "GET") {
-	$floor = null;
+/**
+ * Main entry point.
+ */
+function main() {
+	header("Content-Type: application/json");
+	check_required_params();
 
-	// Check if the user wants a list of the floors.
-	if (!isset($_GET["id"]) && !isset($_GET["number"])) {
-		list_floors();
-		return;
+	if ($_SERVER["REQUEST_METHOD"] == "GET") {
+		$floor = null;
+
+		// Check if the user wants a list of the floors.
+		if (!isset($_GET["id"]) && !isset($_GET["number"])) {
+			list_floors();
+			return;
+		}
+
+		// User wants information about a floor.
+		check_required_params("specific_floor");
+		if (isset($_GET["id"])) {
+			$floor = Floor::FromID($_GET["id"]);
+		} else if (isset($_GET["number"])) {
+			$floor = Floor::FromNumber($_GET["number"]);
+		}
+
+		// Send floor information.
+		get_floor($floor);
 	}
-
-	// User wants information about a floor.
-	check_required_params("specific_floor");
-	if (isset($_GET["id"])) {
-		$floor = Floor::FromID($_GET["id"]);
-	} else if (isset($_GET["number"])) {
-		$floor = Floor::FromNumber($_GET["number"]);
-	}
-
-	// Send floor information.
-	get_floor($floor);
 }
 
 /**
@@ -128,4 +134,5 @@ function check_required_params($stage = null) {
 	}
 }
 
+main();
 ?>
