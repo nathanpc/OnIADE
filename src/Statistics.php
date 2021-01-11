@@ -83,15 +83,19 @@ class Statistics {
 	 */
 	public function as_array() {
 		$arr = array(
-			"devices" => $this->devices,
-			"types" => $this->types,
-			"models" => $this->models,
-			"oses" => $this->oses,
-			"last_entries" => $this->last_entries
+			"devices" => array(),
+			"types" => array(),
+			"models" => array(),
+			"oses" => array(),
+			"last_entries" => array()
 		);
 
-		// TODO: Go through each array and populate them with the actual arrays,
-		//       not the objects.
+		// Add devices to array.
+		foreach ($arr as $key => $value) {
+			foreach ($this->{$key} as $item) {
+				array_push($arr[$key], $item->as_array());
+			}
+		}
 
 		return $arr;
 	}
