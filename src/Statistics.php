@@ -25,12 +25,37 @@ class Statistics {
 	 * needed from the database.
 	 */
 	public function __construct() {
-		$this->floors = Floor::List();
-		$this->devices = Device::List();
-		$this->types = Device\Type::List();
-		$this->models = Device\Model::List();
-		$this->oses = Device\OperatingSystem::List();
-		$this->last_entries = History\Entry::List();
+		$this->floors = null;
+		$this->devices = null;
+		$this->types = null;
+		$this->models = null;
+		$this->oses = null;
+		$this->last_entries = null;
+	}
+
+	/**
+	 * Gets detailed information about a floor.
+	 * 
+	 * @return array Array with detailed information about each floor.
+	 */
+	public function get_floors_detailed() {
+		$floors = array();
+
+		// Go through floors getting detailed information on each of them.
+		foreach ($this->get_floors() as $floor) {
+			$info = $floor->as_array();
+			$info["entries"] = array();
+
+			// Populate entries.
+			$entries = History\Entry::List($floor);
+			foreach ($entries as $entry)
+				array_push($info["entries"], $entry->as_array());
+
+			// Push this information into the floors array.
+			array_push($floors, $info);
+		}
+
+		return $floors;
 	}
 
 	/**
@@ -39,6 +64,9 @@ class Statistics {
 	 * @return array Array of {@link Floor} objects.
 	 */
 	public function get_floors() {
+		if (is_null($this->floors))
+			$this->floors = Floor::List();
+
 		return $this->floors;
 	}
 
@@ -48,6 +76,9 @@ class Statistics {
 	 * @return array Array of {@link Device} objects.
 	 */
 	public function get_devices() {
+		if (is_null($this->devices))
+			$this->devices = Device::List();
+
 		return $this->devices;
 	}
 
@@ -57,6 +88,9 @@ class Statistics {
 	 * @return array Array of {@link Type} objects.
 	 */
 	public function get_device_types() {
+		if (is_null($this->types))
+			$this->types = Device\Type::List();
+
 		return $this->types;
 	}
 
@@ -66,6 +100,9 @@ class Statistics {
 	 * @return array Array of {@link Model} objects.
 	 */
 	public function get_device_models() {
+		if (is_null($this->models))
+			$this->models = Device\Model::List();
+
 		return $this->models;
 	}
 
@@ -75,6 +112,9 @@ class Statistics {
 	 * @return array Array of {@link OperatingSystem} objects.
 	 */
 	public function get_device_oses() {
+		if (is_null($this->oses))
+			$this->oses = Device\OperatingSystem::List();
+
 		return $this->oses;
 	}
 
@@ -84,6 +124,9 @@ class Statistics {
 	 * @return array Array of {@link Entry} objects.
 	 */
 	public function get_last_entries() {
+		if (is_null($this->last_entries))
+			$this->last_entries = History\Entry::List();
+
 		return $this->last_entries;
 	}
 
@@ -96,15 +139,16 @@ class Statistics {
 		$arr = array(
 			"floors" => array(),
 			"devices" => array(),
-			"types" => array(),
-			"models" => array(),
-			"oses" => array(),
+			"device_types" => array(),
+			"device_models" => array(),
+			"device_oses" => array(),
 			"last_entries" => array()
 		);
 
-		// Add devices to array.
+		// This was a nice hack. I'm proud to have wrote it.
 		foreach ($arr as $key => $value) {
-			foreach ($this->{$key} as $item) {
+			// Go through getters adding them as arrays to the master array.
+			foreach ([$this, "get_$key"]() as $item) {
 				array_push($arr[$key], $item->as_array());
 			}
 		}

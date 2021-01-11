@@ -43,8 +43,9 @@ class Floor {
 		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
 
 		// Go through the results creating Floor objects.
-		foreach ($rows as $floor)
+		foreach ($rows as $floor) {
 			array_push($floors, Floor::FromID($floor["id"]));
+		}
 
 		return $floors;
 	}

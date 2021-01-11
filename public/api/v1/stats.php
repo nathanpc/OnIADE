@@ -26,6 +26,9 @@ function main() {
 		case "all":
 			get_everything();
 			break;
+		case "floors":
+			get_floors();
+			break;
 		default:
 			check_required_params("info", "invalid");
 	}
@@ -45,6 +48,28 @@ function get_everything() {
 			"message" => "Got everything for ya."
 		),
 		"stats" => $stats->as_array()
+	);
+
+	// Send response.
+	http_response_code(200);
+	header("Content-Type: application/json");
+	echo json_encode($response);
+}
+
+/**
+ * Lists all the floors in details.
+ */
+function get_floors() {
+	global $stats;
+
+	// Build the base response.
+	$response = array(
+		"info" => array(
+			"level" => 2,
+			"status" => "ok",
+			"message" => "Got everything for ya."
+		),
+		"floors" => $stats->get_floors_detailed()
 	);
 
 	// Send response.
