@@ -45,7 +45,7 @@ class Entry {
 	 * @param  Floor $floor Want to filter by floor?
 	 * @return array        Array of Entry objects found.
 	 */
-	public static function List($floor = null) {
+	public static function List($floor = null, $list_ignored = false) {
 		$devices = array();
 		$dbh = Database::connect();
 		$last = Entry::LastEntry();
@@ -69,8 +69,15 @@ class Entry {
 		$entries = $query->fetchAll(PDO::FETCH_ASSOC);
 
 		// Go through the entries creating Entry objects.
-		foreach ($entries as $entry)
-			array_push($devices, Entry::FromID($entry["id"]));
+		foreach ($entries as $entry) {
+			$ent = Entry::FromID($entry["id"]);
+
+			// Check if we should skip the entry.
+			if (!$list_ignored && $ent->get_device()->is_ignored())
+				continue;
+
+			array_push($devices, $ent);
+		}
 
 		return $devices;
 	}

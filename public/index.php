@@ -9,24 +9,6 @@
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
 
-/**
- * Counts the number of entries in an {@link Entry} array that aren't ignored.
- * 
- * @param  array $entries Array of {@link Entry}.
- * @return int            Number of counted entries.
- */
-function count_valid_entries($entries) {
-	$count = 0;
-
-	// Go through the entries looking for non-ignored ones.
-	foreach ($entries as $entry) {
-		if (!$entry->get_device()->is_ignored())
-			$count++;
-	}
-
-	return $count;
-}
-
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
@@ -37,7 +19,7 @@ function count_valid_entries($entries) {
 			<?php $entries = History\Entry::List($floor) ?>
 
 			<h3>
-				<?= count_valid_entries($entries) ?>
+				<?= count($entries) ?>
 				<small class="text-muted"><?= $floor->get_name() ?></small>
 			</h3>
 
