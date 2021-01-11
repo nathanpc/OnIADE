@@ -41,6 +41,27 @@ class Type {
 	}
 
 	/**
+	 * Gets a list of all the device types available.
+	 * 
+	 * @return array Array of Type objects.
+	 */
+	public static function List() {
+		$types = array();
+
+		// Get types from the database ordered.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT id FROM device_types");
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Go through the results creating Type objects.
+		foreach ($rows as $type)
+			array_push($types, Type::FromID($type["id"]));
+
+		return $types;
+	}
+
+	/**
 	 * Creates a new device type and automatically saves it to the database.
 	 * 
 	 * @param  string  $key      Device type key.

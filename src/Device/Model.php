@@ -33,6 +33,27 @@ class Model {
 	}
 
 	/**
+	 * Gets a list of all the device models available.
+	 * 
+	 * @return array Array of Model objects.
+	 */
+	public static function List() {
+		$models = array();
+
+		// Get models from the database ordered.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT id FROM device_models");
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Go through the results creating Model objects.
+		foreach ($rows as $model)
+			array_push($models, Model::FromID($model["id"]));
+
+		return $models;
+	}
+
+	/**
 	 * Creates a new device model and automatically saves it to the database.
 	 * 
 	 * @param  string $manufacturer Device manufacturer.

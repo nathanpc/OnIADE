@@ -41,6 +41,27 @@ class OperatingSystem {
 	}
 
 	/**
+	 * Gets a list of all the device operating systems available.
+	 * 
+	 * @return array Array of OperatingSystem objects.
+	 */
+	public static function List() {
+		$oses = array();
+
+		// Get operating systems from the database ordered.
+		$dbh = Database::connect();
+		$query = $dbh->prepare("SELECT id FROM operating_systems");
+		$query->execute();
+		$rows = $query->fetchAll(PDO::FETCH_ASSOC);
+
+		// Go through the results creating OperatingSystem objects.
+		foreach ($rows as $os)
+			array_push($oses, OperatingSystem::FromID($os["id"]));
+
+		return $oses;
+	}
+
+	/**
 	 * Creates a new device OS and automatically saves it to the database.
 	 * 
 	 * @param  string          $name    Its proper name.
