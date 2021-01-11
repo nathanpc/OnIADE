@@ -18,6 +18,7 @@
 
 	<!-- Custom stuff -->
 	<link href="/assets/css/default.css" rel="stylesheet">
+	<script type="text/javascript" src="/assets/js/http.js"></script>
 </head>
 <body>
 	<?php require __DIR__ . "/navbar.php"; ?>
