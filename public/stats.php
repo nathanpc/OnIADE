@@ -29,11 +29,34 @@ require __DIR__ . "/../vendor/autoload.php";
 			<small class="text-muted">How crowded are they?</small>
 		</h3>
 		<div id="floors">
-			<canvas id="floors-occupation" width="400" height="400"></canvas>
+			<canvas id="floors-occupation"></canvas>
 		</div>
 		<script type="text/javascript">
 			stats.populateFloorsDetail();
 		</script>
+		<br>
+
+		<!-- Operating Systems -->
+		<h3>
+			Operating Systems
+			<small class="text-muted">What's the preference of our users?</small>
+		</h3>
+		<div id="oses">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<canvas id="desktop-oses"></canvas>
+					</div>
+					<div class="col">
+						<canvas id="mobile-oses"></canvas>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			stats.populateOSDetail();
+		</script>
+		<br>
 	</div>
 
 <?php require(__DIR__ . "/../templates/footer.php"); ?>
