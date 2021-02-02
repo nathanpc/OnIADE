@@ -51,17 +51,21 @@ require __DIR__ . "/../vendor/autoload.php";
 				<dt class="col-sm-2">Last IP Address</dt>
 				<dd class="col-sm-9"><?= $entry->get_ip_addr() ?></dd>
 
-				<dt class="col-sm-2">Type</dt>
-				<dd class="col-sm-9"><?= $device->get_type()->as_flair() ?></dd>
-
-				<?php if (!is_null($device->get_model()->get_manufacturer())) { ?>
-					<dt class="col-sm-2">Manufacturer</dt>
-					<dd class="col-sm-9"><?= $device->get_model()->get_manufacturer() ?></dd>
+				<?php if (!is_null($device->get_type())) { ?>
+					<dt class="col-sm-2">Type</dt>
+					<dd class="col-sm-9"><?= $device->get_type()->as_flair() ?></dd>
 				<?php } ?>
 
-				<?php if (!is_null($device->get_model()->get_name())) { ?>
-					<dt class="col-sm-2">Model</dt>
-					<dd class="col-sm-9"><?= $device->get_model()->get_name() ?></dd>
+				<?php if (!is_null($device->get_model())) { ?>
+					<?php if (!is_null($device->get_model()->get_manufacturer())) { ?>
+						<dt class="col-sm-2">Manufacturer</dt>
+						<dd class="col-sm-9"><?= $device->get_model()->get_manufacturer() ?></dd>
+					<?php } ?>
+
+					<?php if (!is_null($device->get_model()->get_name())) { ?>
+						<dt class="col-sm-2">Model</dt>
+						<dd class="col-sm-9"><?= $device->get_model()->get_name() ?></dd>
+					<?php } ?>
 				<?php } ?>
 				
 				<?php if (!is_null($device->get_os())) { ?>
