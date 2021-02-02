@@ -64,6 +64,12 @@
 	top: 619px;
 }
 
+/* Device Popovers */
+.device-poplist {
+	list-style: none;
+	padding-left: 0;
+}
+
 /* Scrollers */
 .x-scroller {
 	overflow-x: auto;
