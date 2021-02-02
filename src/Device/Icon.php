@@ -70,10 +70,11 @@ class Icon {
 	/**
 	 * Gets the Font Awesome tag for this icon.
 	 * 
-	 * @param  boolean $with_color Should we have the color added?
-	 * @return string              Font Awesome tag with color if asked for.
+	 * @param  boolean $with_color       Should we have the color added?
+	 * @param  boolean $use_singlequotes Use single quotes for HTML attributes?
+	 * @return string                    Font Awesome tag with color if asked for.
 	 */
-	public function as_tag($with_color = true) {
+	public function as_tag($with_color = true, $use_singlequotes = false) {
 		$html = "";
 
 		if ($with_color)
@@ -83,6 +84,10 @@ class Icon {
 
 		if ($with_color)
 			$html .= "</span>";
+
+		// Use single quotes?
+		if ($use_singlequotes)
+			return str_replace("\"", "'", $html);
 
 		return $html;
 	}

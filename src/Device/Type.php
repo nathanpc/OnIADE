@@ -232,13 +232,21 @@ class Type {
 	/**
 	 * Gets an HTML flair of the device type.
 	 * 
-	 * @return string HTML flair with icon, color, and description.
+	 * @param  boolean $use_singlequotes Use single quotes for HTML attributes?
+	 * @return string                    HTML flair with icon, color, and
+	 *                                   description.
 	 */
-	public function as_flair() {
-		return "<span class=\"badge\" style=\"background-color: " .
+	public function as_flair($use_singlequotes = false) {
+		$str = "<span class=\"badge\" style=\"background-color: " .
 			$this->get_icon()->get_color() . ";\">" .
-			$this->get_icon()->as_tag(false) . " " . $this->as_string() .
-			"</span>";
+			$this->get_icon()->as_tag(false, $use_singlequotes) . " " .
+			$this->as_string() . "</span>";
+
+		// Use single quotes?
+		if ($use_singlequotes)
+			return str_replace("\"", "'", $str);
+
+		return $str;
 	}
 
 	/**
