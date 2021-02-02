@@ -287,6 +287,25 @@ class OperatingSystem {
 	}
 
 	/**
+	 * Gets an HTML text of the operating system.
+	 * 
+	 * @param  boolean $use_singlequotes Use single quotes for HTML attributes?
+	 * @return string                    HTML text with icon, color, and
+	 *                                   description.
+	 */
+	public function as_text($use_singlequotes = false) {
+		$str = "<span style=\"color: " . $this->get_icon()->get_color() .
+			";\">" . $this->get_icon()->as_tag(false, $use_singlequotes) . " " .
+			$this->as_string() . "</span>";
+
+		// Use single quotes?
+		if ($use_singlequotes)
+			return str_replace("\"", "'", $str);
+
+		return $str;
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.

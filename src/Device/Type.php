@@ -250,6 +250,25 @@ class Type {
 	}
 
 	/**
+	 * Gets an HTML text of the device type.
+	 * 
+	 * @param  boolean $use_singlequotes Use single quotes for HTML attributes?
+	 * @return string                    HTML text with icon, color, and
+	 *                                   description.
+	 */
+	public function as_text($use_singlequotes = false) {
+		$str = "<span style=\"color: " . $this->get_icon()->get_color() .
+			";\">" . $this->get_icon()->as_tag(false, $use_singlequotes) . " " .
+			$this->as_string() . "</span>";
+
+		// Use single quotes?
+		if ($use_singlequotes)
+			return str_replace("\"", "'", $str);
+
+		return $str;
+	}
+
+	/**
 	 * String representation of this object.
 	 * 
 	 * @return string String representation of this object.
