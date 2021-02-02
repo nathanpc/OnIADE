@@ -30,12 +30,28 @@ function rand_sim_pos() {
 				<?php $entries = History\Entry::List($floor) ?>
 
 				<?php foreach ($entries as $entry) { ?>
+					<?php $device = $entry->get_device(); ?>
+
 					<img class="sim floor<?= $floor->get_number() ?>"
 						src="/assets/images/sim.png"
-						style="left: <?= rand_sim_pos() ?>px">
+						style="left: <?= rand_sim_pos() ?>px"
+						data-bs-toggle="popover" data-bs-placement="top"
+						data-bs-trigger="hover click" data-bs-html="true"
+						title="<?= $device->get_hostname() ?>"
+						data-bs-content="<?php require(__DIR__ . "/../templates/device_popover.php"); ?>">
 				<?php } ?>
 			<?php } ?>
 		</div>
 	</div>
+
+	<!-- Enable popovers. -->
+	<script type="text/javascript">
+		window.addEventListener("load", function () {
+			var popoverTriggerList = [].slice.call(document.querySelectorAll("[data-bs-toggle='popover']"));
+			var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+				return new bootstrap.Popover(popoverTriggerEl);
+			});
+		});
+	</script>
 
 <?php require(__DIR__ . "/../templates/footer.php"); ?>
