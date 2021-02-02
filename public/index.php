@@ -9,34 +9,33 @@
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
 
+/**
+ * Gets a random X position for a Sim in a buildilg floor.
+ * 
+ * @return int Random X position in a building floor.
+ */
+function rand_sim_pos() {
+	return rand(320, 915);
+}
+
 ?>
 
 <?php require(__DIR__ . "/../templates/head.php"); ?>
-	<!-- Main Body -->
-	<div class="container">
-		<!-- Floors -->
-		<?php foreach (Floor::List() as $floor) { ?>
-			<?php $entries = History\Entry::List($floor) ?>
 
-			<h3>
-				<?= count($entries) ?>
-				<small class="text-muted"><?= $floor->get_name() ?></small>
-			</h3>
+	<div class="container x-scroller">
+		<div class="building-container">
+			<img id="building" src="/assets/images/iade.png">
 
-			<ul class="list-group">
+			<?php foreach (Floor::List() as $floor) { ?>
+				<?php $entries = History\Entry::List($floor) ?>
+
 				<?php foreach ($entries as $entry) { ?>
-					<?php if (!$entry->get_device()->is_ignored()) { ?>
-						<li class="list-group-item">
-							<?= $entry->get_device()->get_hostname() ?>
-							<span class="flair-spacer"> </span>
-							<?= implode("\n", $entry->get_device()->get_flairs()) ?>
-						</li>
-					<?php } ?>
+					<img class="sim floor<?= $floor->get_number() ?>"
+						src="/assets/images/sim.png"
+						style="left: <?= rand_sim_pos() ?>px">
 				<?php } ?>
-			</ul>
-
-			<br>
-		<?php } ?>
+			<?php } ?>
+		</div>
 	</div>
 
 <?php require(__DIR__ . "/../templates/footer.php"); ?>

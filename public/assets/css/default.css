@@ -5,10 +5,66 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
+/* Badges in Lists */
 .list-group-item .flair-spacer {
 	margin-left: 0.7em;
 }
 
 .list-group-item .badge {
 	margin-left: 0.5em;
+}
+
+/* IADE Building */
+.building-container {
+	position: relative;
+	width: 1102px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.building-container #building {
+	max-height: 670px;
+}
+
+/* Sims */
+.building-container .sim {
+	position: absolute;
+	max-height: 40px;
+}
+
+.building-container .sim.floor7 {
+	top: 136px;
+}
+
+.building-container .sim.floor6 {
+	top: 205px;
+}
+
+.building-container .sim.floor5 {
+	top: 274px;
+}
+
+.building-container .sim.floor4 {
+	top: 343px;
+}
+
+.building-container .sim.floor3 {
+	top: 412px;
+}
+
+.building-container .sim.floor2 {
+	top: 481px;
+}
+
+.building-container .sim.floor1 {
+	top: 550px;
+}
+
+.building-container .sim.floor0 {
+	top: 619px;
+}
+
+/* Scrollers */
+.x-scroller {
+	overflow-x: auto;
 }
