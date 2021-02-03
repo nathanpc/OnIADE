@@ -50,6 +50,10 @@ function active_navitem($check_path) {
 						href="/mydevice.php">My Device</a>
 				</li>
 				<li class="nav-item">
+					<a class="nav-link <?= active_navitem("research") ?>"
+						href="/research.php">Research</a>
+				</li>
+				<li class="nav-item">
 					<a class="nav-link <?= active_navitem("debugview") ?>"
 						href="/debugview.php">Debug</a>
 				</li>
