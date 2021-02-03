@@ -1,3 +1,32 @@
+<?php
+
+/**
+ * Checks if the current page requesting this template should be marked as
+ * active in the navbar items.
+ * 
+ * @param  string $check_path Path to be checked against the requested page path.
+ * @return string             "active" if the page is related to the item or ""
+ *                            if it isn't.
+ */
+function active_navitem($check_path) {
+	$req_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+
+	// Fix root index requests.
+	if ($req_path == "/")
+		$req_path = "/index.php";
+
+	// Decorate the check path.
+	$check_path = "/" . $check_path . ".php";
+
+	// Check if the paths match.
+	if ($req_path == $check_path)
+		return "active";
+
+	return "";
+}
+
+?>
+
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 	<div class="container">
@@ -9,16 +38,20 @@
 		<div class="collapse navbar-collapse" id="navbar">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item">
-					<a class="nav-link active" aria-current="page" href="/">Home</a>
+					<a class="nav-link <?= active_navitem("index") ?>"
+						href="/">Home</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/stats.php">Statistics</a>
+					<a class="nav-link <?= active_navitem("stats") ?>"
+						href="/stats.php">Statistics</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/mydevice.php">My Device</a>
+					<a class="nav-link <?= active_navitem("mydevice") ?>"
+						href="/mydevice.php">My Device</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/debugview.php">Debug</a>
+					<a class="nav-link <?= active_navitem("debugview") ?>"
+						href="/debugview.php">Debug</a>
 				</li>
 			</ul>
 		</div>
