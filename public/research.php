@@ -165,13 +165,13 @@ require __DIR__ . "/../vendor/autoload.php";
 					</div>
 				</div>
 
-				<div class="col-lg-5">
+				<div class="col-lg-5 attach-col">
 					<div>
 						<label for="thumbnail" class="form-label upload-label">Thumbnail</label>
 						<input class="form-control" id="thumbnail" type="file">
 					</div>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-4 attach-col">
 					<div>
 						<label for="attachment" class="form-label upload-label">Attachment</label>
 						<input class="form-control" id="attachment" type="file">

@@ -71,9 +71,14 @@
 }
 
 /* Contribution Form */
+.attach-col {
+	margin-top: 7px;
+}
+
 .upload-label {
 	opacity: 0.65;
 	font-size: 14px;
+	margin-bottom: 0;
 }
 
 /* Scrollers */
