@@ -9,7 +9,9 @@
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
 use OnIADE\Utilities\DateTimeUtil;
+use OnIADE\Utilities\UploadHandler;
 use PDO;
+use DateTime;
 
 class Contribution {
 	private $id;
@@ -21,6 +23,7 @@ class Contribution {
 	private $description;
 	private $datetime;
 	private $show_email;
+	private $hash;
 
 	/**
 	 * Contribution object constructor.
@@ -34,10 +37,11 @@ class Contribution {
 	 * @param string   $description Brief description of the contribution.
 	 * @param DateTime $datetime    Date and time it was contributed.
 	 * @param boolean  $show_email  Show the email to the public?
+	 * @param string   $hash        Hash representation of this contribution.
 	 */
 	public function __construct($id = null, $fullname = null, $website = null,
 			$email = null, $title = null, $url = null, $description = null,
-			$datetime = null, $show_email = null) {
+			$datetime = null, $show_email = null, $hash = null) {
 		$this->id = $id;
 		$this->fullname = $fullname;
 		$this->website = $website;
@@ -82,6 +86,8 @@ class Contribution {
 	 * @param  string       $url         URL to the project/contribution.
 	 * @param  string       $description Brief description of the contribution.
 	 * @param  boolean      $show_email  Show the email to the public?
+	 * @param  assoc        $thumbnail   $_FILES entry for the thumbnail.
+	 * @param  assoc        $attachment  $_FILES entry for the attachment.
 	 * @return Contribution              Populated and stored contribution
 	 *                                   object or NULL if something went wrong.
 	 */
@@ -92,9 +98,33 @@ class Contribution {
 		$contrib = new Contribution(null, $fullname, $website, $email, $title,
 			$url, $description, new DateTime("NOW"), $show_email);
 
+		// TODO: Rewrite this whole upload thing to store the filename in the database and also accept any type of extension in files.
+
 		// Check if our thumbnail is valid.
 		if (is_null($thumbnail)) {
 			return null;
+		} else {
+			$handler = new UploadHandler($thumbnail);
+
+			// Check if we actually have an image and that it was uploaded.
+			if ((!$handler->is_image()) || (!$handler->was_uploaded()))
+				return null;
+
+			// Move the thumbnail to its rightful place.
+			if (!$handler->move($contrib->get_thumbnail_path()))
+				return null;
+		}
+
+		// Try to save the attachment.
+		if (!is_null($attachment)) {
+			$handler = new UploadHandler($attachment);
+
+			// Check if we had anything uploaded.
+			if ($handler->was_uploaded()) {
+				// Move the attachment to its rightful place.
+				if (!$handler->move($contrib->get_attachment_path()))
+					return null;
+			}
 		}
 
 		// Save everything to the database and return.
@@ -142,22 +172,23 @@ class Contribution {
 		// Check if we are creating a new contribution or updating one.
 		if (is_null($this->id)) {
 			// Creating a new contribution.
-			$stmt = $dbh->prepare("INSERT INTO contributions(id, dt, fullname, personal_website, email, title, url, description, show_email) VALUES (:id, :dt, :fullname, :personal_website, :email, :title, :url, :description, :show_email)");
+			$stmt = $dbh->prepare("INSERT INTO contributions(dt, fullname, personal_website, email, title, url, description, show_email, md5) VALUES (:dt, :fullname, :personal_website, :email, :title, :url, :description, :show_email, :md5)");
 		} else {
 			// Update an existing contribution.
-			$stmt = $dbh->prepare("UPDATE contributions SET dt = :dt, fullname = :fullname, personal_website = :personal_website, email = :email, title = :title, url = :url, description = :description, show_email = :show_email WHERE id = :id");
+			$stmt = $dbh->prepare("UPDATE contributions SET dt = :dt, fullname = :fullname, personal_website = :personal_website, email = :email, title = :title, url = :url, description = :description, show_email = :show_email, md5 = :md5 WHERE id = :id");
 			$stmt->bindValue(":id", $this->id);
 		}
 
 		// Bind parameters and execute.
 		$stmt->bindValue(":dt", DateTimeUtil::mysql_format($this->datetime));
-		$stmt->bindValue(":fullname", $this->name);
+		$stmt->bindValue(":fullname", $this->fullname);
 		$stmt->bindValue(":personal_website", $this->website);
 		$stmt->bindValue(":email", $this->email);
 		$stmt->bindValue(":title", $this->title);
 		$stmt->bindValue(":url", $this->url);
 		$stmt->bindValue(":description", $this->description);
 		$stmt->bindValue(":show_email", (int)$this->show_email);
+		$stmt->bindValue(":md5", $this->get_hash());
 		$stmt->execute();
 
 		// Set the contribution ID.
@@ -171,7 +202,7 @@ class Contribution {
 	 * @return string Contribution thumbnail path.
 	 */
 	public function get_thumbnail_path() {
-		return "/uploads/contrib/thumb_" . $this->id . ".png";
+		return "/uploads/contrib/thumb_" . $this->get_hash() . ".png";
 	}
 
 	/**
@@ -188,8 +219,8 @@ class Contribution {
 	 * 
 	 * @return string Contribution attachment path.
 	 */
-	public function get_attn_path() {
-		return "/uploads/contrib/attn_" . $this->id . ".zip";
+	public function get_attachment_path() {
+		return "/uploads/contrib/attn_" . $this->get_hash() . ".zip";
 	}
 
 	/**
@@ -301,6 +332,22 @@ class Contribution {
 	}
 
 	/**
+	 * Gets a hash of the contribution.
+	 * 
+	 * @return string MD5 hash of this contribution.
+	 */
+	public function get_hash() {
+		// Generate a hash if we don't have one.
+		if (is_null($this->hash)) {
+			return md5($this->fullname . $this->website . $this->email .
+				$this->title . $this->url . $this->description .
+				$this->show_email . date($this->datetime->format("c")));
+		}
+
+		return $this->hash;
+	}
+
+	/**
 	 * Array representation of this object. Perfect for use in JSON responses.
 	 * 
 	 * @return array Array representation of this object.
@@ -315,6 +362,8 @@ class Contribution {
 			"url" => $this->url,
 			"description" => $this->description,
 			"show_email" => $this->show_email,
+			"thumbnail" => $this->get_thumbnail_path(),
+			"attachment" => $this->get_attachment_path(),
 			"timestamp" => array(
 				"iso8601" => date($this->datetime->format("c")),
 				"human_readable" => $this->get_timestamp()

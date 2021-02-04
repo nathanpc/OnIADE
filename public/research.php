@@ -119,48 +119,49 @@ require __DIR__ . "/../vendor/autoload.php";
 
 			<p>You can contribute your work simply by submitting it via the following form and it'll be publicly displayed in our contributions board where other contributors will be able to view it and improve on it further. We might even integrate it into our platform so that everyone can see it.</p>
 
-			<form class="row g-3">
+			<form action="contribute.php" method="post" enctype="multipart/form-data"
+					class="row g-3">
 				<div class="col-lg-3">
 					<div class="form-floating">
-						<input type="text" class="form-control" id="name" required>
+						<input type="text" class="form-control" name="name" required>
 						<label for="name">Full Name</label>
 					</div>
 				</div>
 				<div class="col-lg-3">
 					<div class="form-floating">
-						<input type="url" class="form-control" id="website">
+						<input type="url" class="form-control" name="website">
 						<label for="website">Personal Website</label>
 					</div>
 				</div>
 				<div class="col-lg-3">
 					<div class="form-floating">
-						<input type="email" class="form-control" id="email" required>
+						<input type="email" class="form-control" name="email" required>
 						<label for="email">Email Address</label>
 					</div>
 				</div>
 				<div class="col-lg-3 align-self-center">
 					<div class="form-check form-switch">
-						<input class="form-check-input" type="checkbox" id="publicemail" checked>
+						<input class="form-check-input" type="checkbox" name="publicemail" checked>
 						<label class="form-check-label" for="publicemail">Let others contact you via email</label>
 					</div>
 				</div>
 
 				<div class="col-lg-5">
 					<div class="form-floating">
-						<input type="text" class="form-control" id="title" required>
+						<input type="text" class="form-control" name="title" required>
 						<label for="title">Contribution Title</label>
 					</div>
 				</div>
 				<div class="col-lg-4">
 					<div class="form-floating">
-						<input type="url" class="form-control" id="contribwebsite">
+						<input type="url" class="form-control" name="contribwebsite">
 						<label for="contribwebsite">Contribution Website</label>
 					</div>
 				</div>
 
 				<div class="col-lg-9">
 					<div class="form-floating">
-						<textarea class="form-control" id="description" aria-label="Brief description of your contribution." style="height: 100px" required></textarea>
+						<textarea class="form-control" name="description" aria-label="Brief description of your contribution." style="height: 100px" required></textarea>
 						<label for="description">Brief Description</label>
 					</div>
 				</div>
@@ -168,18 +169,18 @@ require __DIR__ . "/../vendor/autoload.php";
 				<div class="col-lg-5 attach-col">
 					<div>
 						<label for="thumbnail" class="form-label upload-label">Thumbnail</label>
-						<input class="form-control" id="thumbnail" type="file">
+						<input class="form-control" name="thumbnail" type="file" required>
 					</div>
 				</div>
 				<div class="col-lg-4 attach-col">
 					<div>
 						<label for="attachment" class="form-label upload-label">Attachment</label>
-						<input class="form-control" id="attachment" type="file">
+						<input class="form-control" name="attachment" type="file">
 					</div>
 				</div>
 
 				<div class="col-12">
-					<button type="submit" class="btn btn-primary">Submit Contribution</button>
+					<input type="submit" class="btn btn-primary" value="Submit Contribution">
 				</div>
 			</form>
 		</div>
@@ -195,63 +196,67 @@ require __DIR__ . "/../vendor/autoload.php";
 			<p>Showcasing what our wonderful users have contributed so far:</p>
 
 			<div class="contrib-container">
-				<div class="contrib-entry">
-					<div class="row justify-content-md-center">
-						<div class="col-md-7">
-							<h4>Some interesting contribution title</h4>
-							<small class="author">
-								Submitted 2 days ago by <a href="#">Nathan Campos</a> &lt;<a href="mailto:hi@nathancampos.me">hi@nathancampos.me</a>&gt;
-							</small>
+				<?php $contributions = Contribution::List(); ?>
+				<?php foreach ($contributions as $key => $contrib) { ?>
+					<div class="contrib-entry">
+						<div class="row justify-content-md-center">
+							<div class="col-md-7">
+								<h4><?= $contrib->get_title() ?></h4>
+								<small class="author">
+									Submitted <?= $contrib->get_timestamp() ?> by
+									
+									<?php if ($contrib->has_personal_website()) { ?>
+										<a href="<?= $contrib->get_personal_website() ?>">
+											<?= $contrib->get_fullname() ?>
+										</a>
+									<?php } else { ?>
+										<?= $contrib->get_fullname() ?>
+									<?php } ?>
 
-							<p class="description">Whether you're a designer, a researcher, or someone that really enjoys data, you can contribute to make our platform even better! Researchers and data lovers can use our data to discover new and interesting correlations that should be included in the web application so that everyone can see them as well, and designers can find new and better ways to transform this data into beautiful visualizations that captivate our audience and brings meaning to the data that we are gathering.</p>
+									<?php if ($contrib->can_show_email()) { ?>
+										&lt;<a href="<?= $contrib->email() ?>"><?= $contrib->email() ?></a>&gt;
+									<?php } ?>
+								</small>
+
+								<p class="description">
+									<?= $contrib->get_description() ?>
+								</p>
+							</div>
+
+							<div class="col-md-3">
+								<img src="<?= $contrib->get_thumbnail_path() ?>">
+							</div>
 						</div>
 
-						<div class="col-md-3">
-							<img src="/assets/images/iade.png">
+						<br>
+
+						<div class="row justify-content-md-center">
+							<div class="col-md-auto">
+								<?php if ($contrib->has_url()) { ?>
+									<a class="btn btn-primary" role="button"
+											href="<?= $contrib->get_url() ?>">
+										Website
+									</a>
+								<?php } ?>
+
+								<?php if ($contrib->has_attachment()) { ?>
+									<a class="btn btn-primary" role="button"
+											href="<?= $contrib->get_attachment_path() ?>">
+										Attachment
+									</a>
+								<?php } ?>
+							</div>
 						</div>
+
+						<?php if ($key !== array_key_last($contributions)) { ?>
+							<div class="row justify-content-md-center">
+								<div class="col-md-10">
+									<hr>
+								</div>
+							</div>
+						<?php } ?>
 					</div>
-
-					<br>
-
-					<div class="row justify-content-md-center">
-						<div class="col-md-auto">
-							<a class="btn btn-primary" href="#" role="button">Website</a>
-							<a class="btn btn-primary" href="#" role="button">Attachment</a>
-						</div>
-					</div>
-
-					<div class="row justify-content-md-center">
-						<div class="col-md-10">
-							<hr>
-						</div>
-					</div>
-				</div>
-
-				<div class="contrib-entry">
-					<div class="row justify-content-md-center">
-						<div class="col-md-7">
-							<h4>Some interesting contribution title</h4>
-							<small class="author">
-								Submitted 2 days ago by <a href="#">Nathan Campos</a> &lt;<a href="mailto:hi@nathancampos.me">hi@nathancampos.me</a>&gt;
-							</small>
-
-							<p class="description">Whether you're a designer, a researcher, or someone that really enjoys data, you can contribute to make our platform even better! Researchers and data lovers can use our data to discover new and interesting correlations that should be included in the web application so that everyone can see them as well, and designers can find new and better ways to transform this data into beautiful visualizations that captivate our audience and brings meaning to the data that we are gathering.</p>
-						</div>
-
-						<div class="col-md-3">
-							<img src="/assets/images/iade.png">
-						</div>
-					</div>
-
-					<br>
-
-					<div class="row justify-content-md-center">
-						<div class="col-md-auto">
-							<a class="btn btn-primary" href="#" role="button">Website</a>
-							<a class="btn btn-primary" href="#" role="button">Attachment</a>
-						</div>
-					</div>
-				</div>
+				<?php } ?>
 
 				<br>
 			</div>

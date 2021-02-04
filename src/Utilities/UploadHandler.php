@@ -53,6 +53,10 @@ class UploadHandler {
 	public function save($subdir = null, $name = null) {
 		$path = $this->uploaddir;
 
+		// Check if we had something uploaded.
+		if (!$this->was_uploaded())
+			return false;
+
 		// Check for errors.
 		if ($this->file["error"] !== UPLOAD_ERR_OK)
 			return false;
@@ -71,6 +75,16 @@ class UploadHandler {
 
 		// Move file and return its result.
 		return move_uploaded_file($this->file["tmp_name"], $path);
+	}
+
+	/**
+	 * Checks if we actually had something uploaded.
+	 * 
+	 * @return boolean Was something actually uploaded?
+	 */
+	public function was_uploaded() {
+		return file_exists($this->file["tmp_name"]) &&
+			is_uploaded_file($this->file["tmp_name"]);
 	}
 
 	/**
