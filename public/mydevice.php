@@ -25,11 +25,15 @@ require __DIR__ . "/../vendor/autoload.php";
 	<!-- Main Body -->
 	<div class="container">
 		<?php if (!$spy->is_spyable()) { ?>
-			<div style="text-align: center;">
-				<h1>Device not found</h1>
-				<p>Sorry but we couldn't find your device in the database. Looks like you've reached us so fast that our server was unable to track you previously. Please wait a couple of minutes for our highly motivated, peaceful, and privacy-loving robots to find your device and add it to our database.</p>
-				<br>
-				<p><i>Your IP address is: <?= $spy->get_ip_addr() ?></i></p>
+			<div class="row justify-content-md-center">
+				<div class="col-md-9">
+					<div style="text-align: center;">
+						<h1>Device not found</h1>
+						<p>Sorry but we couldn't find your device in the database. Looks like you've reached us so fast that our server was unable to track you previously. Please wait a couple of minutes for our highly motivated, peaceful, and privacy-loving robots to find your device and add it to our database.</p>
+						<br>
+						<p><i>Your IP address is: <?= $spy->get_ip_addr() ?></i></p>
+					</div>
+				</div>
 			</div>
 
 			<br>
