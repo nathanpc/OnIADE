@@ -193,6 +193,68 @@ require __DIR__ . "/../vendor/autoload.php";
 			</h3>
 
 			<p>Showcasing what our wonderful users have contributed so far:</p>
+
+			<div class="contrib-container">
+				<div class="contrib-entry">
+					<div class="row justify-content-md-center">
+						<div class="col-md-7">
+							<h4>Some interesting contribution title</h4>
+							<small class="author">
+								Submitted 2 days ago by <a href="#">Nathan Campos</a> &lt;<a href="mailto:hi@nathancampos.me">hi@nathancampos.me</a>&gt;
+							</small>
+
+							<p class="description">Whether you're a designer, a researcher, or someone that really enjoys data, you can contribute to make our platform even better! Researchers and data lovers can use our data to discover new and interesting correlations that should be included in the web application so that everyone can see them as well, and designers can find new and better ways to transform this data into beautiful visualizations that captivate our audience and brings meaning to the data that we are gathering.</p>
+						</div>
+
+						<div class="col-md-3">
+							<img src="/assets/images/iade.png">
+						</div>
+					</div>
+
+					<br>
+
+					<div class="row justify-content-md-center">
+						<div class="col-md-auto">
+							<a class="btn btn-primary" href="#" role="button">Website</a>
+							<a class="btn btn-primary" href="#" role="button">Attachment</a>
+						</div>
+					</div>
+
+					<div class="row justify-content-md-center">
+						<div class="col-md-10">
+							<hr>
+						</div>
+					</div>
+				</div>
+
+				<div class="contrib-entry">
+					<div class="row justify-content-md-center">
+						<div class="col-md-7">
+							<h4>Some interesting contribution title</h4>
+							<small class="author">
+								Submitted 2 days ago by <a href="#">Nathan Campos</a> &lt;<a href="mailto:hi@nathancampos.me">hi@nathancampos.me</a>&gt;
+							</small>
+
+							<p class="description">Whether you're a designer, a researcher, or someone that really enjoys data, you can contribute to make our platform even better! Researchers and data lovers can use our data to discover new and interesting correlations that should be included in the web application so that everyone can see them as well, and designers can find new and better ways to transform this data into beautiful visualizations that captivate our audience and brings meaning to the data that we are gathering.</p>
+						</div>
+
+						<div class="col-md-3">
+							<img src="/assets/images/iade.png">
+						</div>
+					</div>
+
+					<br>
+
+					<div class="row justify-content-md-center">
+						<div class="col-md-auto">
+							<a class="btn btn-primary" href="#" role="button">Website</a>
+							<a class="btn btn-primary" href="#" role="button">Attachment</a>
+						</div>
+					</div>
+				</div>
+
+				<br>
+			</div>
 		</div>
 	</div>
 
