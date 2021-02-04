@@ -156,7 +156,7 @@ class Contribution {
 		$contrib = $contrib[0];
 		return new Contribution($contrib["id"], $contrib["fullname"],
 			$contrib["personal_website"], $contrib["email"], $contrib["title"],
-			$contrib["url"], $contrib["description"], $contrib["dt"],
+			$contrib["url"], $contrib["description"], new DateTime($contrib["dt"]),
 			(bool)$contrib["show_email"]);
 	}
 
