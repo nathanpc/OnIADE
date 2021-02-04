@@ -11,6 +11,7 @@ require __DIR__ . "/../../vendor/autoload.php";
 use OnIADE\Database;
 use OnIADE\Device;
 use OnIADE\Floor;
+use OnIADE\Utilities\DateTimeUtil;
 use PDO;
 use DateTime;
 use DateInterval;
@@ -223,48 +224,6 @@ class Entry {
 	}
 
 	/**
-	 * Creates a nice human-readable "X minutes ago"-type string.
-	 * @link https://stackoverflow.com/a/18602474/126353 Original Author
-	 * 
-	 * @param  DateTime $datetime Date and time to compare to now.
-	 * @param  boolean  $full     Show a very detailed string down to the seconds?
-	 * @return string             Human-readable time passed string.
-	 */
-	public static function time_since_string($datetime, $full = false) {
-		// Get the difference and normalize the data.
-		$now = new DateTime;
-		$diff = $now->diff($datetime);
-		$diff->w = floor($diff->d / 7);
-		$diff->d -= $diff->w * 7;
-
-		// Key to human-readable string lookup table.
-		$string = array(
-			"y" => "year",
-			"m" => "month",
-			"w" => "week",
-			"d" => "day",
-			"h" => "hour",
-			"i" => "minute",
-			"s" => "second",
-		);
-
-		// Go through and create a human-readable string.
-		foreach ($string as $k => &$v) {
-			if ($diff->$k) {
-				$v = $diff->$k . " " . $v . ($diff->$k > 1 ? "s" : "");
-			} else {
-				unset($string[$k]);
-			}
-		}
-
-		// Should we just give the user the whole massive string?
-		if (!$full)
-			$string = array_slice($string, 0, 1);
-
-		return $string ? implode(", ", $string) . " ago" : "just now";
-	}
-
-	/**
 	 * Gets the device of this history entry.
 	 * 
 	 * @return Device Entry"s device.
@@ -313,7 +272,7 @@ class Entry {
 		if (!is_null($subtract))
 			$dt->sub(new DateInterval("PT" . $subtract . "M"));
 
-		return $dt->format("Y-m-d H:i:s");
+		return DateTimeUtil::mysql_format($dt);
 	}
 
 	/**
@@ -323,7 +282,7 @@ class Entry {
 	 * @return string Human-readable date and time of this entry.
 	 */
 	public function get_timestamp_elapsed() {
-		return Entry::time_since_string($this->datetime);
+		return DateTimeUtil::since_string($this->datetime);
 	}
 
 	/**
