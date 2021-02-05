@@ -179,7 +179,7 @@ require __DIR__ . "/../vendor/autoload.php";
 					</div>
 				</div>
 
-				<div class="col-12">
+				<div class="col-9 text-center">
 					<input type="submit" class="btn btn-primary" value="Submit Contribution">
 				</div>
 			</form>
@@ -192,71 +192,17 @@ require __DIR__ . "/../vendor/autoload.php";
 				Contributions
 				<small class="text-muted">What people have done with our data so far</small>
 			</h3>
-
-			<p>Showcasing what our wonderful users have contributed so far:</p>
+			<br>
 
 			<div class="contrib-container">
-				<?php $contributions = Contribution::List(); ?>
-				<?php foreach ($contributions as $key => $contrib) { ?>
-					<div class="contrib-entry">
-						<div class="row justify-content-md-center">
-							<div class="col-md-7">
-								<h4><?= $contrib->get_title() ?></h4>
-								<small class="author">
-									Submitted <?= $contrib->get_timestamp() ?> by
-									
-									<?php if ($contrib->has_personal_website()) { ?>
-										<a href="<?= $contrib->get_personal_website() ?>">
-											<?= $contrib->get_fullname() ?>
-										</a>
-									<?php } else { ?>
-										<?= $contrib->get_fullname() ?>
-									<?php } ?>
-
-									<?php if ($contrib->can_show_email()) { ?>
-										&lt;<a href="mailto:<?= $contrib->get_email() ?>"><?= $contrib->get_email() ?></a>&gt;
-									<?php } ?>
-								</small>
-
-								<p class="description">
-									<?= $contrib->get_description() ?>
-								</p>
-							</div>
-
-							<div class="col-md-3">
-								<img src="<?= $contrib->get_thumbnail_path() ?>">
-							</div>
+				<div class="row row-cols-1 row-cols-xl-2">
+					<?php $contributions = Contribution::List(); ?>
+					<?php foreach ($contributions as $key => $contrib) { ?>
+						<div class="col">
+							<?php require(__DIR__ . "/../templates/contrib_card.php"); ?>
 						</div>
-
-						<br>
-
-						<div class="row justify-content-md-center">
-							<div class="col-md-auto">
-								<?php if ($contrib->has_url()) { ?>
-									<a class="btn btn-primary" role="button"
-											href="<?= $contrib->get_url() ?>">
-										Website
-									</a>
-								<?php } ?>
-
-								<?php if ($contrib->has_attachment()) { ?>
-									<a class="btn btn-primary" role="button"
-											href="<?= $contrib->get_attachment_path() ?>">
-										Attachment
-									</a>
-								<?php } ?>
-							</div>
-						</div>
-
-						<?php if ($key !== array_key_last($contributions)) { ?>
-							<div class="row justify-content-md-center">
-								<div class="col-md-10">
-									<hr>
-								</div>
-							</div>
-						<?php } ?>
-					</div>
-				<?php } ?>
+					<?php } ?>
+				</div>
 
 				<br>
 			</div>
