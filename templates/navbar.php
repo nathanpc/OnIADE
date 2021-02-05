@@ -53,10 +53,6 @@ function active_navitem($check_path) {
 					<a class="nav-link <?= active_navitem("research") ?>"
 						href="/research.php">Research</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link <?= active_navitem("debugview") ?>"
-						href="/debugview.php">Debug</a>
-				</li>
 			</ul>
 		</div>
 	</div>
