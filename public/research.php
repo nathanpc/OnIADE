@@ -32,8 +32,8 @@ require __DIR__ . "/../vendor/autoload.php";
 				<small class="text-muted">Grab everything you want</small>
 			</h3>
 
-			<div class="row row-cols-1 row-cols-md-4">
-				<div class="col">
+			<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+				<div class="col mb-3">
 					<div class="card h-100">
 						<div class="card-body">
 							<h5 class="card-title">XML</h5>
@@ -47,7 +47,8 @@ require __DIR__ . "/../vendor/autoload.php";
 						</ul>
 					</div>
 				</div>
-				<div class="col">
+
+				<div class="col mb-3">
 					<div class="card h-100">
 						<div class="card-body">
 							<h5 class="card-title">JSON</h5>
@@ -61,7 +62,8 @@ require __DIR__ . "/../vendor/autoload.php";
 						</ul>
 					</div>
 				</div>
-				<div class="col">
+
+				<div class="col mb-3">
 					<div class="card h-100">
 						<div class="card-body">
 							<h5 class="card-title">CSV</h5>
@@ -76,7 +78,8 @@ require __DIR__ . "/../vendor/autoload.php";
 						</ul>
 					</div>
 				</div>
-				<div class="col">
+
+				<div class="col mb-3">
 					<div class="card h-100">
 						<div class="card-body">
 							<h5 class="card-title">MySQL</h5>
@@ -94,7 +97,6 @@ require __DIR__ . "/../vendor/autoload.php";
 				</div>
 			</div>
 		</div>
-		<br>
 
 		<!-- Open Source! -->
 		<div id="opensource">
