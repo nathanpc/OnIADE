@@ -41,9 +41,21 @@ require __DIR__ . "/../vendor/autoload.php";
 							<p class="card-text">The most obiquitous way to exchange data. This option guarantees compatibility with any programming language. It's specially useful if you want to use <a href="https://www.mathworks.com/products/matlab.html">MATLAB</a> or <a href="https://www.gnu.org/software/octave/index">GNU Octave</a>.</p>
 						</div>
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item"><a href="#">Unique Devices</a></li>
-							<li class="list-group-item"><a href="#">Device History</a></li>
-							<li class="list-group-item"><a href="#">Everything</a></li>
+							<li class="list-group-item">
+								<a href="/export.php?format=xml&data=uniquedevs">
+									Unique Devices
+								</a>
+							</li>
+							<li class="list-group-item">
+								<a href="/export.php?format=xml&data=history">
+									Device History
+								</a>
+							</li>
+							<li class="list-group-item">
+								<a href="/export.php?format=xml&data=everything">
+									Everything
+								</a>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -56,9 +68,21 @@ require __DIR__ . "/../vendor/autoload.php";
 							<p class="card-text">A modern way to interact with our data using programming languages. This option will give you a lot more flexibility if you want to use things like <a href="https://www.python.org/">Python</a> or <a href="https://www.r-project.org/">R</a> to work with our data.</p>
 						</div>
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item"><a href="#">Unique Devices</a></li>
-							<li class="list-group-item"><a href="#">Device History</a></li>
-							<li class="list-group-item"><a href="#">Everything</a></li>
+							<li class="list-group-item">
+								<a href="/export.php?format=json&data=uniquedevs">
+									Unique Devices
+								</a>
+							</li>
+							<li class="list-group-item">
+								<a href="/export.php?format=json&data=history">
+									Device History
+								</a>
+							</li>
+							<li class="list-group-item">
+								<a href="/export.php?format=json&data=everything">
+									Everything
+								</a>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -73,8 +97,16 @@ require __DIR__ . "/../vendor/autoload.php";
 							<p class="card-text">The easiest way to use our data. You can open this file in software packages like Excel and <a href="https://www.libreoffice.org/">LibreOffice Calc</a> and easily interact with the data yourself without any programming required.</p>
 						</div>
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item"><a href="#">Unique Devices</a></li>
-							<li class="list-group-item"><a href="#">Device History</a></li>
+							<li class="list-group-item">
+								<a href="/export.php?format=csv&data=uniquedevs">
+									Unique Devices
+								</a>
+							</li>
+							<li class="list-group-item">
+								<a href="/export.php?format=csv&data=history">
+									Device History
+								</a>
+							</li>
 						</ul>
 					</div>
 				</div>
@@ -91,7 +123,11 @@ require __DIR__ . "/../vendor/autoload.php";
 							<p class="card-text">This option has the highest barrier of entry, but will give you the most flexibility out of all the options in here.</p>
 						</div>
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item"><a href="#">Everything</a></li>
+							<li class="list-group-item">
+								<a href="/export.php?format=mysql&data=everything">
+									Everything
+								</a>
+							</li>
 						</ul>
 					</div>
 				</div>
