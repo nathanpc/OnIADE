@@ -27,22 +27,23 @@ $contrib = Contribution::Create($_POST["name"], $_POST["website"],
 
 	<!-- Main Body -->
 	<div class="container">
-		<?php if (is_null($contrib)) { ?>
-			<div class="row justify-content-md-center">
-				<div class="col-md-9">
-					<div style="text-align: center;">
+		<div class="row justify-content-md-center">
+			<div class="col-md-9">
+				<div style="text-align: center;">
+					<?php if (is_null($contrib)) { ?>
 						<h1>Error submitting contribution</h1>
+
 						<p>Sorry but because of some issue in your upload the submission failed. Go back and check if all of the fields were entered correctly, and most importantly if your thumbnail is actually an image and if your attachment isn't too big.</p>
-					</div>
+					<?php } else { ?>
+						<h1>Thanks for your contribution!</h1>
+
+						<p>We are pleased to have received your contribution, it's a great deal to us that you've taken the time and effort to contribute to our project. To see your contribution you can do so by <a href="/research.php#contributions">clicking here</a>. If you had any issues while submitting or want to change something please feel free to <a href="mailto:nathan@innoveworkshop.com">contact us via email</a> and we'll be more than happy to help you out.</p>
+					<?php } ?>
 				</div>
 			</div>
+		</div>
 
-			<br>
-		<?php } else { ?>
-			<h1>It works!</h1>
-		<?php } ?>
-
-		<pre><code><?php var_dump($_POST); ?></code></pre>
+		<br>
 	</div>
 
 <?php require(__DIR__ . "/../templates/footer.php"); ?>
