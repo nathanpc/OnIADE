@@ -43,10 +43,13 @@ class Entry {
 	/**
 	 * Gets a list of devices that were in the network on a specific floor.
 	 * 
-	 * @param  Floor $floor Want to filter by floor?
-	 * @return array        Array of Entry objects found.
+	 * @param  Floor   $floor          Want to filter by floor?
+	 * @param  boolean $list_ignored   Should we list ignored devices?
+	 * @param  boolean $get_everything Dump the whole device history? (CAUTION)
+	 * @return array                   Array of Entry objects found.
 	 */
-	public static function List($floor = null, $list_ignored = false) {
+	public static function List($floor = null, $list_ignored = false,
+			$get_everything = false) {
 		$devices = array();
 		$dbh = Database::connect();
 		$last = Entry::LastEntry();
