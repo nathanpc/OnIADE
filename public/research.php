@@ -214,7 +214,7 @@ require __DIR__ . "/../vendor/autoload.php";
 									<?php } ?>
 
 									<?php if ($contrib->can_show_email()) { ?>
-										&lt;<a href="<?= $contrib->get_email() ?>"><?= $contrib->get_email() ?></a>&gt;
+										&lt;<a href="mailto:<?= $contrib->get_email() ?>"><?= $contrib->get_email() ?></a>&gt;
 									<?php } ?>
 								</small>
 
