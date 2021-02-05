@@ -14,6 +14,10 @@ use PDO;
 use DateTime;
 
 class Contribution {
+	const UPLOAD_DIR = "/uploads/contrib";
+	const THUMBNAIL_PREFIX = "thumb_";
+	const ATTACHMENT_PREFIX = "attn_";
+
 	private $id;
 	private $fullname;
 	private $website;
@@ -94,35 +98,41 @@ class Contribution {
 	public static function Create($fullname = null, $website = null,
 			$email = null, $title = null, $url = null, $description = null,
 			$show_email = null, $thumbnail = null, $attachment = null) {
-		// Create a temporary object.
+		// Check if we have a personal website.
+		if (empty($website))
+			$website = null;
+
+		// Check if we have a project URL.
+		if (empty($url))
+			$url = null;
+
+		// Create object.
 		$contrib = new Contribution(null, $fullname, $website, $email, $title,
 			$url, $description, new DateTime("NOW"), $show_email);
-
-		// TODO: Rewrite this whole upload thing to store the filename in the database and also accept any type of extension in files.
 
 		// Check if our thumbnail is valid.
 		if (is_null($thumbnail)) {
 			return null;
 		} else {
-			$handler = new UploadHandler($thumbnail);
+			$handler = new UploadHandler($thumbnail, Contribution::UPLOAD_DIR);
 
 			// Check if we actually have an image and that it was uploaded.
 			if ((!$handler->is_image()) || (!$handler->was_uploaded()))
 				return null;
 
 			// Move the thumbnail to its rightful place.
-			if (!$handler->move($contrib->get_thumbnail_path()))
+			if (!$handler->save($contrib->get_thumbnail_fname()))
 				return null;
 		}
 
 		// Try to save the attachment.
 		if (!is_null($attachment)) {
-			$handler = new UploadHandler($attachment);
+			$handler = new UploadHandler($attachment, Contribution::UPLOAD_DIR);
 
 			// Check if we had anything uploaded.
 			if ($handler->was_uploaded()) {
 				// Move the attachment to its rightful place.
-				if (!$handler->move($contrib->get_attachment_path()))
+				if (!$handler->save($contrib->get_attachment_fname()))
 					return null;
 			}
 		}
@@ -157,7 +167,7 @@ class Contribution {
 		return new Contribution($contrib["id"], $contrib["fullname"],
 			$contrib["personal_website"], $contrib["email"], $contrib["title"],
 			$contrib["url"], $contrib["description"], new DateTime($contrib["dt"]),
-			(bool)$contrib["show_email"]);
+			(bool)$contrib["show_email"], $contrib["md5"]);
 	}
 
 	/**
@@ -197,12 +207,31 @@ class Contribution {
 	}
 
 	/**
+	 * Gets the thumbnail file name without an extension.
+	 * 
+	 * @return string Thumbnail file name without extension.
+	 */
+	private function get_thumbnail_fname() {
+		return Contribution::THUMBNAIL_PREFIX . $this->get_hash();
+	}
+
+	/**
 	 * Gets the contribution thumbnail image path.
 	 * 
 	 * @return string Contribution thumbnail path.
 	 */
 	public function get_thumbnail_path() {
-		return "/uploads/contrib/thumb_" . $this->get_hash() . ".png";
+		$upload = new UploadHandler(null, Contribution::UPLOAD_DIR);
+		return $upload->get_path($this->get_thumbnail_fname(), true, true);
+	}
+
+	/**
+	 * Gets the attachment file name without an extension.
+	 * 
+	 * @return string Attachment file name without extension.
+	 */
+	private function get_attachment_fname() {
+		return Contribution::ATTACHMENT_PREFIX . $this->get_hash();
 	}
 
 	/**
@@ -211,16 +240,17 @@ class Contribution {
 	 * @return boolean Do we have an attachment?
 	 */
 	public function has_attachment() {
-		return true;
+		return !is_null($this->get_attachment_path());
 	}
 
 	/**
 	 * Gets the contribution attachment file path.
 	 * 
-	 * @return string Contribution attachment path.
+	 * @return string Contribution attachment path or NULL if one isn't present.
 	 */
 	public function get_attachment_path() {
-		return "/uploads/contrib/attn_" . $this->get_hash() . ".zip";
+		$upload = new UploadHandler(null, Contribution::UPLOAD_DIR);
+		return $upload->get_path($this->get_attachment_fname(), true, true);
 	}
 
 	/**
