@@ -16,6 +16,8 @@ use OnIADE\History;
 use OnIADE\Contribution;
 
 class Exporter {
+	const CSV_KEY_SEPARATOR = "#";
+
 	private $floors;
 	private $devices;
 	private $types;
@@ -117,6 +119,103 @@ class Exporter {
 	 */
 	public function as_json() {
 		return json_encode($this->as_array());
+	}
+
+	/**
+	 * Gets a list with CSV header fields.
+	 * 
+	 * @param  assoc  $item   An item to have its headers extracted.
+	 * @param  string $prefix The prefix the header should have.
+	 * @return array          List of headers.
+	 */
+	private function get_csv_header_fields($item, $prefix = null) {
+		$fields = array();
+
+		// Go through the associative array getting its fields.
+		foreach ($item as $key => $value) {
+			if (is_array($item[$key])) {
+				// Make sure we have a valid next prefix for really nested data.
+				$next_prefix = $key;
+				if (!is_null($prefix))
+					$next_prefix = $prefix . Exporter::CSV_KEY_SEPARATOR . $key;
+
+				// Yay! Recursion!
+				$fields = array_merge($fields,
+					$this->get_csv_header_fields($item[$key], $next_prefix));
+				continue;
+			}
+
+			if (is_null($prefix)) {
+				array_push($fields, $key);
+			} else {
+				array_push($fields, $prefix . Exporter::CSV_KEY_SEPARATOR . $key);
+			}
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * Gets a CSV string field from an associative array path separated by
+	 * CSV_KEY_SEPARATOR.
+	 * 
+	 * @param  assoc  $item  Item to have it's field found.
+	 * @param  string $apath Associative array path separated by
+	 *                       CSV_KEY_SEPARATOR.
+	 * @return string        CSV field string. Empty string if no item found.
+	 */
+	private function get_csv_field_from_path($item, $apath) {
+		$element = $item;
+		$fields = explode(Exporter::CSV_KEY_SEPARATOR, $apath);
+
+		// Go through nested associative arrays to find the field.
+		foreach ($fields as $index) {
+			// Check if it exists.
+			if (!isset($element[$index]))
+				return "";
+
+			$element = $element[$index];
+		}
+
+		// Escape double-quotes inside field.
+		return str_replace("\"", "\"\"", $element);
+	}
+
+	/**
+	 * Exports the data as CSV.
+	 * 
+	 * @return string CSV data.
+	 */
+	public function as_csv() {
+		$arr = $this->as_array();
+		$arr = reset($arr);
+		$buffer = "";
+		$headers = array();
+
+		// Go through array trying to find the most complete example of an item.
+		foreach ($arr as $item) {
+			$tmp_headers = $this->get_csv_header_fields($item);
+			if (count($tmp_headers) > count($headers))
+				$headers = $tmp_headers;
+		}
+
+		// Build document header.
+		foreach ($headers as $field) {
+			$buffer .= "\"$field\",";
+		}
+		$buffer .= "\n";
+
+		// Build the rows in the document.
+		foreach ($arr as $item) {
+			foreach ($headers as $field) {
+				$buffer .= "\"" . 
+					$this->get_csv_field_from_path($item, $field) . "\",";
+			}
+
+			$buffer .= "\n";
+		}
+
+		return $buffer;
 	}
 
 	/**

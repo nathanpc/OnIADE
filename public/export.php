@@ -33,6 +33,10 @@ switch ($_GET["format"]) {
 		header("Content-Type: application/json");
 		echo $exporter->as_json();
 		break;
+	case "csv":
+		header("Content-Type: text/plain");
+		echo $exporter->as_csv();
+		break;
 	default:
 		general_error_response();
 }
