@@ -1,18 +1,20 @@
 	<!-- Footer -->
-	<footer class="container">
-		<hr>
+	<footer>
 		<div class="container">
-			<div class="row">
-				<div class="col">
-					<?= $config->app->name ?> &#169; 2020-<?= date("Y") ?> <a href="https://innoveworkshop.com/">Innove Workshop</a>
+			<hr>
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<?= $config->app->name ?> &#169; 2020-<?= date("Y") ?> <a href="https://innoveworkshop.com/">Innove Workshop</a>
+					</div>
+
+					<div class="col" style="text-align: right;">
+						Designed and built by <a href="https://nathancampos.me/">@nathanpc</a> and <a href="https://www.instagram.com/digobraga8/">@digobraga8</a>
+					</div>
 				</div>
 
-				<div class="col" style="text-align: right;">
-					Designed and built by <a href="https://nathancampos.me/">@nathanpc</a> and <a href="https://www.instagram.com/digobraga8/">@digobraga8</a>
-				</div>
+				<br>
 			</div>
-
-			<br>
 		</div>
 	</footer>
 </body>

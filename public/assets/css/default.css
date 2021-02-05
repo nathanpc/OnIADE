@@ -5,6 +5,16 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
+body {
+	background-image: url(/assets/images/pagebg.png);
+	background-size: cover;
+	background-position-y: 56px;
+}
+
+body > .container {
+	margin-top: 140px;
+}
+
 /* Badges in Lists */
 .list-group-item .flair-spacer {
 	margin-left: 0.7em;
