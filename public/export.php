@@ -24,7 +24,7 @@ if ((!isset($_GET["format"])) || (!isset($_GET["data"])) ||
 	general_error_response();
 
 // Create a new exporter object.
-$exporter = new Exporter();
+$exporter = new Exporter($_GET["data"]);
 if (is_null($exporter))
 	general_error_response();
 

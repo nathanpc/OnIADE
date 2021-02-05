@@ -22,18 +22,20 @@ class Exporter {
 	private $models;
 	private $oses;
 	private $history;
+	private $scope;
 
 	/**
 	 * Exporter object constructor. Just gets us a nice clean slate to work
 	 * with.
 	 */
-	public function __construct() {
+	public function __construct($scope = "everything") {
 		$this->floors = null;
 		$this->devices = null;
 		$this->types = null;
 		$this->models = null;
 		$this->oses = null;
 		$this->history = null;
+		$this->scope = $scope;
 	}
 
 	/**
@@ -123,14 +125,30 @@ class Exporter {
 	 * @return array Array representation of this object.
 	 */
 	public function as_array() {
-		$arr = array(
-			"floors" => array(),
-			"devices" => array(),
-			"device_types" => array(),
-			"device_models" => array(),
-			"device_oses" => array(),
-			"device_history" => array()
-		);
+		$arr = array();
+
+		switch ($this->scope) {
+			case "everything":
+				$arr = array(
+					"floors" => array(),
+					"devices" => array(),
+					"device_types" => array(),
+					"device_models" => array(),
+					"device_oses" => array(),
+					"device_history" => array()
+				);
+				break;
+			case "uniquedevs":
+				$arr = array(
+					"devices" => array()
+				);
+				break;
+			case "history":
+				$arr = array(
+					"device_history" => array()
+				);
+				break;
+		}
 
 		// Populate the array and return.
 		$this->populate_array($arr);
