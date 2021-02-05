@@ -34,7 +34,7 @@ switch ($_GET["format"]) {
 		echo $exporter->as_json();
 		break;
 	case "csv":
-		header("Content-Type: text/plain");
+		header("Content-Type: text/csv");
 		echo $exporter->as_csv();
 		break;
 	default:
