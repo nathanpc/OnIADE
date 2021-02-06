@@ -9,6 +9,9 @@
 
 namespace OnIADE\Utilities;
 require __DIR__ . "/../../vendor/autoload.php";
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 use OnIADE\Database;
 use OnIADE\Floor;
 use OnIADE\Device;
@@ -160,6 +163,36 @@ class Exporter {
 		}
 
 		return $buffer;
+	}
+
+	/**
+	 * Exports a database dump as plain SQL.
+	 * 
+	 * @param  array  $tables  Tables to dump from the database.
+	 * @param  int    $timeout Command execution timeout in seconds.
+	 * @return string          SQL database dump.
+	 */
+	public function as_db_dump($tables, $timeout = 20) {
+		// Get application configuration and build the command array.
+		$config = require(__DIR__ . "/../../config/config.php");
+		$command = array_merge([ $config->database->binpath . "mysqldump", "-u",
+			$config->database->user, "-p" . $config->database->password,
+			$config->database->dbname ], $tables);
+
+		// Setup the command to dump the database.
+		$process = new Process($command);
+		$process->setTimeout($timeout);
+
+		try {
+			// Run MySQL dump and return our nice dump.
+			$process->mustRun();
+			return $process->getOutput();
+		} catch (ProcessTimedOutException $e) {
+			return "ERROR: Database dump command took too long to finish.";
+		} catch (ProcessFailedException $e) {
+			return "ERROR: Failed to run the database dump command.\n\n" .
+				$e->getMessage();
+		}
 	}
 
 	/**

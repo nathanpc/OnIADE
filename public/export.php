@@ -28,6 +28,7 @@ $exporter = new Exporter($_GET["data"]);
 if (is_null($exporter))
 	general_error_response();
 
+// Check which format we need to export in.
 switch ($_GET["format"]) {
 	case "json":
 		header("Content-Type: application/json");
@@ -35,7 +36,15 @@ switch ($_GET["format"]) {
 		break;
 	case "csv":
 		header("Content-Type: text/csv");
+		header("Content-Disposition: attachment; filename=\"export.csv\"");
 		echo $exporter->as_csv();
+		break;
+	case "mysql":
+		header("Content-Type: application/sql");
+		header("Content-Disposition: attachment; filename=\"export.sql\"");
+		echo $exporter->as_db_dump([ "floors", "operating_systems",
+			"device_types", "device_models", "devices", "request_headers",
+			"device_history" ]);
 		break;
 	default:
 		general_error_response();
