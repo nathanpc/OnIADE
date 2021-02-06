@@ -20,7 +20,7 @@ return (object) array(
 	"dev" => (object)array(
 		"env" => true,
 		"min_floor" => 0,
-		"max_floor" => 3
+		"max_floor" => 7
 	),
 	"host" => (object)array(
 		"ip_addr" => "192.168.1.15",
