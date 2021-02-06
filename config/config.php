@@ -14,7 +14,8 @@ return (object) array(
 		"host" => "localhost",
 		"dbname" => "oniade",
 		"user" => "iade",
-		"password" => "password"
+		"password" => "password",
+		"binpath" => "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\"
 	),
 	"dev" => (object)array(
 		"env" => true,
