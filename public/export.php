@@ -30,6 +30,10 @@ if (is_null($exporter))
 
 // Check which format we need to export in.
 switch ($_GET["format"]) {
+	case "xml":
+		header("Content-Type: text/xml");
+		echo $exporter->as_xml();
+		break;
 	case "json":
 		header("Content-Type: application/json");
 		echo $exporter->as_json();

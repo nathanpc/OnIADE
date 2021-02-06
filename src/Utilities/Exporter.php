@@ -9,6 +9,7 @@
 
 namespace OnIADE\Utilities;
 require __DIR__ . "/../../vendor/autoload.php";
+use SimpleXMLElement;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -113,6 +114,19 @@ class Exporter {
 			$this->history = History\Entry::List(null, true, true);
 
 		return $this->history;
+	}
+
+	/**
+	 * Exports the data as XML.
+	 * 
+	 * @return string XML data.
+	 */
+	public function as_xml() {
+		// Generate XML.
+		$xml = new SimpleXMLElement("<OnIADE/>");
+		$this->get_xml_from_array($xml, $this->as_array());
+
+		return $xml->asXML();
 	}
 
 	/**
@@ -304,6 +318,49 @@ class Exporter {
 
 		// Escape double-quotes inside field.
 		return str_replace("\"", "\"\"", $element);
+	}
+
+	/**
+	 * Recursively converts an array into XML.
+	 * 
+	 * @param  SimpleXMLElement $parent Parent XML node.
+	 * @param  array            $arr    Array to be converted into XML.
+	 * @return SimpleXMLElement         XML version of the array.
+	 */
+	private function get_xml_from_array($parent, $arr) {
+		// Walk through the array adding childs to the parent XML node.
+		array_walk($arr, function ($value, $key, $parent) {
+			// Check if we need to go down another array and convert it.
+			if (is_array($value)) {
+				// Check if the array is associative or part of a list.
+				$child = null;
+				if (is_int($key)) {
+					// Try to extract a meaningful name from the parent.
+					if (substr($parent->getName(), -1) == "s") {
+						// Parent's name ends with an S, so just remove it for
+						// the child's name.
+						$child = $parent->addChild(substr($parent->getName(), 0, -1));
+					} else {
+						// Couldn't get any name, use a generic term.
+						$child = $parent->addChild("item");
+					}
+				} else {
+					// It's associative, so just add the element.
+					$child = $parent->addChild($key);
+				}
+
+				// Recursively append the array to the parent element.
+				$this->get_xml_from_array($child, $value);
+			} else if (is_null($value)) {
+				// Ignore nulls.
+				return;
+			} else {
+				// Just a simple child to add.
+				$parent->addChild($key, $value);
+			}
+		}, $parent);
+
+		return $parent;
 	}
 }
 
