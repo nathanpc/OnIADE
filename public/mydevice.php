@@ -23,7 +23,7 @@ require __DIR__ . "/../vendor/autoload.php";
 ?>
 
 	<!-- Main Body -->
-	<div class="container">
+	<div class="container building-bg">
 		<?php if (!$spy->is_spyable()) { ?>
 			<div class="row justify-content-md-center">
 				<div class="col-md-9">
