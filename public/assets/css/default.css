@@ -5,15 +5,15 @@
  * @author Nathan Campos <nathan@innoveworkshop.com>
  */
 
-/*body {
+/* Building as Backgorund */
+.building-bg {
+	padding-top: 130px;
+	padding-left: 60px;
+	padding-right: 190px;
+
 	background-image: url(/assets/images/pagebg.png);
 	background-size: cover;
-	background-position-y: 56px;
 }
-
-body > .container {
-	margin-top: 140px;
-}*/
 
 /* Badges in Lists */
 .list-group-item .flair-spacer {
