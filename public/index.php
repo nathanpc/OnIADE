@@ -16,7 +16,7 @@ use OnIADE\Utilities\UploadHandler;
  * @return int Random X position in a building floor.
  */
 function rand_sim_pos() {
-	return rand(320, 915);
+	return rand(439, 915);
 }
 
 /**
