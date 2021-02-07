@@ -55,6 +55,7 @@ class Contribution {
 		$this->description = $description;
 		$this->datetime = $datetime;
 		$this->show_email = $show_email;
+		$this->hash = $hash;
 	}
 
 	/**
