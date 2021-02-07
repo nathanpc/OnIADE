@@ -23,7 +23,9 @@ require __DIR__ . "/../vendor/autoload.php";
 ?>
 
 	<!-- Main Body -->
-	<div class="container building-bg">
+	<div id="bg-container" class="container building-bg">
+		<script type="text/javascript">loadBuildingBGSettings();</script>
+		
 		<?php if (!$spy->is_spyable()) { ?>
 			<div class="row justify-content-md-center">
 				<div class="col-md-9">

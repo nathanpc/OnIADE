@@ -22,7 +22,9 @@ require __DIR__ . "/../vendor/autoload.php";
 	</script>
 
 	<!-- Main Body -->
-	<div class="container building-bg">
+	<div id="bg-container" class="container building-bg">
+		<script type="text/javascript">loadBuildingBGSettings();</script>
+		
 		<!-- Floors -->
 		<h3>
 			Floors

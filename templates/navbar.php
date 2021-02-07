@@ -1,14 +1,12 @@
 <?php
 
 /**
- * Checks if the current page requesting this template should be marked as
- * active in the navbar items.
+ * Checks if the current page matches our specified name.
  * 
- * @param  string $check_path Path to be checked against the requested page path.
- * @return string             "active" if the page is related to the item or ""
- *                            if it isn't.
+ * @param  string  $check_path Path to be checked against the requested page path.
+ * @return boolean             TRUE if the current page name matches.
  */
-function active_navitem($check_path) {
+function is_current_page($check_path) {
 	$req_path = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
 
 	// Fix root index requests.
@@ -18,8 +16,20 @@ function active_navitem($check_path) {
 	// Decorate the check path.
 	$check_path = "/" . $check_path . ".php";
 
+	return $req_path == $check_path;
+}
+
+/**
+ * Checks if the current page requesting this template should be marked as
+ * active in the navbar items.
+ * 
+ * @param  string $check_path Path to be checked against the requested page path.
+ * @return string             "active" if the page is related to the item or ""
+ *                            if it isn't.
+ */
+function active_navitem($check_path) {
 	// Check if the paths match.
-	if ($req_path == $check_path)
+	if (is_current_page($check_path))
 		return "active";
 
 	return "";
@@ -60,6 +70,15 @@ function active_navitem($check_path) {
 				</li>
 			</ul>
 		</div>
+
+		<?php if (is_current_page("stats") || is_current_page("mydevice")) { ?>
+			<span class="navbar-text">
+				<a href="#" onclick="toggleBuildingBG()" data-bs-toggle="tooltip"
+						data-bs-original-title="Toggle background building">
+					<i class="far fa-building"></i>
+				</a>
+			</span>
+		<?php } ?>
 	</div>
 </nav>
 
