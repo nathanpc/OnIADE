@@ -25,7 +25,7 @@ require __DIR__ . "/../vendor/autoload.php";
 	<!-- Main Body -->
 	<div id="bg-container" class="container building-bg">
 		<script type="text/javascript">loadBuildingBGSettings();</script>
-		
+
 		<?php if (!$spy->is_spyable()) { ?>
 			<div class="row justify-content-md-center">
 				<div class="col-md-9">
@@ -93,6 +93,27 @@ require __DIR__ . "/../vendor/autoload.php";
 				
 				<dt class="col-sm-2">Last Seen</dt>
 				<dd class="col-sm-9"><?= $entry->get_timestamp_elapsed() ?></dd>
+			</dl>
+
+			<h3>
+				Online Time
+				<small class="text-muted">How long have you been online?</small>
+			</h3>
+			<dl class="row">
+				<dt class="col-sm-2">Today</dt>
+				<dd class="col-sm-9"><?= $device->get_time_online_today() ?> minutes</dd>
+				
+				<dt class="col-sm-2">This Week</dt>
+				<dd class="col-sm-9"><?= $device->get_time_online("week") ?> minutes</dd>
+				
+				<dt class="col-sm-2">This Month</dt>
+				<dd class="col-sm-9"><?= $device->get_time_online("month") ?> minutes</dd>
+				
+				<dt class="col-sm-2">This Year</dt>
+				<dd class="col-sm-9"><?= $device->get_time_online("year") ?> minutes</dd>
+				
+				<dt class="col-sm-2">Since the Pandemic</dt>
+				<dd class="col-sm-9"><?= $device->get_time_online("ever") ?> minutes</dd>
 			</dl>
 		<?php } ?>
 	</div>

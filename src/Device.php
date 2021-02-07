@@ -8,7 +8,10 @@
 
 namespace OnIADE;
 require __DIR__ . "/../vendor/autoload.php";
+use OnIADE\Utilities\DateTimeUtil;
+use OnIADE\History;
 use PDO;
+use DateTime;
 
 class Device {
 	private $id;
@@ -165,6 +168,61 @@ class Device {
 		// Set the device ID.
 		if (is_null($this->id))
 			$this->id = $dbh->lastInsertId();
+	}
+
+	/**
+	 * Gets the amount of time a device has been online on the network for a
+	 * given period.
+	 * 
+	 * @param  string $period Period to calculate the time for. (This can be:
+	 *                        "today", "week", "month", "year", "ever")
+	 * @return int            Number of minutes a device has been online.
+	 */
+	public function get_time_online($period = "today") {
+		$config = require(__DIR__ . "/../config/config.php");
+		$dbh = Database::connect();
+		$last = History\Entry::LastEntry();
+
+		// Get the past timestamp from last entry.
+		$dt = $last->get_timestamp();
+		switch ($period) {
+			case "today":
+				$dt->modify("today");
+				break;
+			case "week":
+				$dt->modify("Sunday this week");
+				break;
+			case "month":
+				$dt->modify("first day of");
+				break;
+			case "year":
+				$dt->modify("first day of January");
+				break;
+			case "ever":
+				$dt->modify("first day of March 2020");
+				break;
+			default:
+				return null;
+		}
+
+		// Prepare and execute query.
+		$query = $dbh->prepare("SELECT COUNT(*) FROM device_history WHERE device_id = :device_id AND dt > :dt");
+		$query->bindValue(":device_id", $this->get_id());
+		$query->bindValue(":dt", DateTimeUtil::mysql_format($dt));
+		$query->execute();
+
+		// Return time online.
+		return (int)($query->fetchColumn()) * $config->scanner->interval;
+	}
+
+	/**
+	 * Gets the amount of time a device has been online on the network for the
+	 * current day.
+	 * 
+	 * @return int Number of minutes a device has been online today.
+	 */
+	public function get_time_online_today() {
+		return $this->get_time_online("today");
 	}
 
 	/**

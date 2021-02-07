@@ -32,4 +32,8 @@
 			<li>Model: <?= $device->get_model()->get_name() ?></li>
 		<?php } ?>
 	<?php } ?>
+
+	<br>
+
+	<li>This user has been online for the past <b><?= $device->get_time_online_today() ?></b> minutes.</b>
 </ul>
