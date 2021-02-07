@@ -29,7 +29,7 @@ return (object) array(
 	"scanner" => (object)array(
 		"range" => "192.168.1.0/24",
 		"scan_netbios" => true,
-		"interval" => 30
+		"interval" => 5
 	)
 );
 
