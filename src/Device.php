@@ -363,6 +363,13 @@ class Device {
 			"mac_addr" => $this->mac_addr,
 			"hostname" => $this->hostname,
 			"ignored" => (bool)$this->ignored,
+			"time_online" => array(
+				"today" => $this->get_time_online("today"),
+				"week" => $this->get_time_online("week"),
+				"month" => $this->get_time_online("month"),
+				"year" => $this->get_time_online("year"),
+				"ever" => $this->get_time_online("ever")
+			),
 			"type" => null,
 			"model" => null,
 			"os" => null
