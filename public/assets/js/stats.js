@@ -61,8 +61,10 @@ Statistics.prototype.populateOSDetail = function () {
 		entries = entries.entries;
 
 		// Create graphs.
-		parent.graphOperatingSystem("desktop", entries);
-		parent.graphOperatingSystem("mobile", entries);
+		parent.graphOperatingSystem("desktop", "bot", entries);
+		parent.graphOperatingSystem("mobile", "tablet", entries);
+		parent.graphOSOnlineTime("desktop", "bot", entries);
+		parent.graphOSOnlineTime("mobile", "tablet", entries);
 	});
 }
 
@@ -154,12 +156,13 @@ Statistics.prototype.graphFloorOccupancy = function (floors) {
 }
 
 /**
- * Creates a graph of the desktop operating systems in use.
+ * Creates a graph of the operating systems in use.
  *
  * @param {String} type    Device type.
+ * @param {String} alttype Alternative device type that fits this as well.
  * @param {Array}  entries List of device entries.
  */
-Statistics.prototype.graphOperatingSystem = function (type, entries) {
+Statistics.prototype.graphOperatingSystem = function (type, alttype, entries) {
 	var cls = this;
 	var ctx = document.getElementById(type + "-oses").getContext("2d");
 	var labels = [];
@@ -179,7 +182,8 @@ Statistics.prototype.graphOperatingSystem = function (type, entries) {
 		// Check if we have a device type.
 		if (entry.device.type !== null) {
 			// Check if we have the correct type of device.
-			if ((entry.device.type.key === type) && (entry.device.os !== null)) {
+			if (((entry.device.type.key === type) || (entry.device.type.key === alttype)) 
+					&& (entry.device.os !== null)) {
 				// Check if it's already in our labels array.
 				var already_added = false;
 				labels.forEach(function (label) {
@@ -205,6 +209,84 @@ Statistics.prototype.graphOperatingSystem = function (type, entries) {
 
 		// Count devices by operating system.
 		cls.countDeviceOS(entries, type, label, datasets[0]);
+	});
+
+	// Setup and graph the data.
+	var chart = new Chart(ctx, {
+		type: "doughnut",
+		data: {
+			labels: labels,
+			datasets: datasets
+		},
+		options: {
+			responsiveAnimationDuration: this.animationDuration,
+			maintainAspectRatio: false,
+			legend: {
+				position: "top"
+			},
+			animation: {
+				animateScale: true,
+				animateRotate: true
+			}
+		}
+	});
+	chart.canvas.parentNode.style.height = "400px";
+}
+
+/**
+ * Creates a graph of the online time per operating systems in use.
+ *
+ * @param {String} type    Device type.
+ * @param {String} alttype Alternative device type that fits this as well.
+ * @param {Array}  entries List of device entries.
+ */
+Statistics.prototype.graphOSOnlineTime = function (type, alttype, entries) {
+	var cls = this;
+	var ctx = document.getElementById(type + "-oses-time").getContext("2d");
+	var labels = [];
+
+	// Setup the datasets.
+	var datasets = [
+		{
+			label: type.charAt(0).toUpperCase() + type.slice(1),
+			data: [],
+			backgroundColor: [],
+			borderColor: []
+		}
+	];
+
+	// Go through entries trying to find OS names.
+	entries.forEach(function (entry) {
+		// Check if we have a device type.
+		if (entry.device.type !== null) {
+			// Check if we have the correct type of device.
+			if (((entry.device.type.key === type) || (entry.device.type.key === alttype)) 
+					&& (entry.device.os !== null)) {
+				// Check if it's already in our labels array.
+				var already_added = false;
+				labels.forEach(function (label) {
+					if (label === entry.device.os.name) {
+						already_added = true;
+						return;
+					}
+				});
+
+				// Add new label.
+				if (!already_added)
+					labels.push(entry.device.os.name);
+			}
+		}
+	});
+	//labels.push("Unknown");
+
+	// Go through labels and count the devices that match them.
+	labels.forEach(function (label) {
+		// Handle the unknown label.
+		if (label === "Unknown")
+			label = null;
+
+		// Count devices by operating system.
+		cls.countDeviceOSOnlineTime(entries, type, label, datasets[0]);
 	});
 
 	// Setup and graph the data.
@@ -295,6 +377,53 @@ Statistics.prototype.countDeviceOS = function (entries, type, name, dataset) {
 			if (entry.device.os.name === name) {
 				// Count it up.
 				count++;
+
+				// Check if we need to set the color.
+				if (color === null)
+					color = entry.device.os.icon.color;
+			}
+		}
+	});
+
+	dataset.data.push(count);
+	dataset.borderColor.push(color);
+	dataset.backgroundColor.push(color + "33");
+	if (color === null)
+		dataset.backgroundColor.push(null);
+}
+
+/**
+ * Counts devices by operating system for the operating system charts.
+ * 
+ * @param  {Array}  entries An entries array.
+ * @param  {String} type    Device type.
+ * @param  {String} name    Operating system name or NULL for the unknown.
+ * @param  {Array}  dataset Dataset to put the data in.
+ */
+Statistics.prototype.countDeviceOSOnlineTime = function (entries, type, name, dataset) {
+	var count = 0;
+	var color = null;
+
+	// Go through entries.
+	entries.forEach(function (entry) {
+		// Check if we are searching for unknowns.
+		if (name === null) {
+			if (entry.device.type != null) {
+				if ((entry.device.type.key === type) && (entry.device.os === null)) {
+					count += entry.device.time_online.today;
+				}
+			}
+
+			color = "#000000";
+			return;
+		}
+
+		// Check if we have an operating system.
+		if (entry.device.os !== null) {
+			// Check if it matches our search.
+			if (entry.device.os.name === name) {
+				// Count it up.
+				count += entry.device.time_online.today;
 
 				// Check if we need to set the color.
 				if (color === null)

@@ -24,18 +24,24 @@ require __DIR__ . "/../vendor/autoload.php";
 	<!-- Main Body -->
 	<div id="bg-container" class="container building-bg">
 		<script type="text/javascript">loadBuildingBGSettings();</script>
-		
-		<!-- Floors -->
+
+		<!-- Online Time -->
 		<h3>
-			Floors
-			<small class="text-muted">How crowded are they?</small>
+			Online Time
+			<small class="text-muted">How long have people been online today?</small>
 		</h3>
-		<div id="floors">
-			<canvas id="floors-occupation"></canvas>
+		<div id="online-time">
+			<div class="container">
+				<div class="row">
+					<div class="col">
+						<canvas id="desktop-oses-time"></canvas>
+					</div>
+					<div class="col">
+						<canvas id="mobile-oses-time"></canvas>
+					</div>
+				</div>
+			</div>
 		</div>
-		<script type="text/javascript">
-			stats.populateFloorsDetail();
-		</script>
 		<br>
 
 		<!-- Operating Systems -->
@@ -57,6 +63,19 @@ require __DIR__ . "/../vendor/autoload.php";
 		</div>
 		<script type="text/javascript">
 			stats.populateOSDetail();
+		</script>
+		<br>
+		
+		<!-- Floors -->
+		<h3>
+			Floors
+			<small class="text-muted">How crowded are they?</small>
+		</h3>
+		<div id="floors">
+			<canvas id="floors-occupation"></canvas>
+		</div>
+		<script type="text/javascript">
+			stats.populateFloorsDetail();
 		</script>
 		<br>
 	</div>
