@@ -273,7 +273,7 @@ class Entry {
 	public function get_mysql_timestamp($subtract = null) {
 		$dt = $this->datetime;
 		if (!is_null($subtract))
-			$dt->sub(new DateInterval("PT" . $subtract . "M"));
+			$dt->sub(new DateInterval("PT" . ceil($subtract) . "M"));
 
 		return DateTimeUtil::mysql_format($dt);
 	}
