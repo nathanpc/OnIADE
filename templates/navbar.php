@@ -34,7 +34,12 @@ function active_navitem($check_path) {
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<a class="navbar-brand" href="/"><?= $config->app->name ?></a>
+		<a class="navbar-brand" href="/">
+			<img src="/assets/images/logow.png" alt="" height="32"
+				class="d-inline-block align-top">
+			<?= $config->app->name ?>
+		</a>
+
 		<div class="collapse navbar-collapse" id="navbar">
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item">
